@@ -10,7 +10,7 @@ import {
   Cog6ToothIcon,
 } from "@heroicons/react/24/solid";
 
-export function SamplePages() {
+export function StrukturFile() {
   return (
     <div className="mt-8 mb-8 flex flex-col gap-6">
 
@@ -73,4 +73,4 @@ export function SamplePages() {
   );
 }
 
-export default SamplePages;
+export default StrukturFile;

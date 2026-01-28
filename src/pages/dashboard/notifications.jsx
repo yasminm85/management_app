@@ -5,57 +5,138 @@ import {
   CardHeader,
   CardBody,
 } from "@material-tailwind/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function Notifications() {
   const scrollContainerRef = useRef(null);
+  const ceoCardRef = useRef(null);
+  const deptHeadRefs = useRef([]);
+  const teamMemberRefs = useRef([]);
+  const lineRefs = useRef([]);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
-  const teamMembers = [
-    {
+  const organizationStructure = {
+    ceo: {
       name: "Sarah Chen",
       role: "CEO & Founder",
       image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
       bio: "Visionary leader with 15+ years in tech innovation",
-      color: "from-purple-500 to-pink-500"
+      email: "sarah.chen@company.com",
+      color: "from-purple-600 to-pink-600"
     },
-    {
-      name: "Michael Ross",
-      role: "CTO",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-      bio: "Expert in scalable architecture and AI systems",
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
-      name: "Emily Zhang",
-      role: "Head of Design",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-      bio: "Award-winning designer crafting beautiful experiences",
-      color: "from-orange-500 to-red-500"
-    },
-    {
-      name: "David Kumar",
-      role: "Lead Developer",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
-      bio: "Full-stack engineer passionate about clean code",
-      color: "from-green-500 to-emerald-500"
-    },
-    {
-      name: "Lisa Anderson",
-      role: "Marketing Director",
-      image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop",
-      bio: "Strategic storyteller building impactful brands",
-      color: "from-indigo-500 to-purple-500"
-    },
-    {
-      name: "James Wilson",
-      role: "Product Manager",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-      bio: "Product innovator turning ideas into reality",
-      color: "from-teal-500 to-blue-500"
-    }
-  ];
+    departments: [
+      {
+        head: {
+          name: "Michael Ross",
+          role: "Chief Technology Officer",
+          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+          bio: "Leading technical innovation and infrastructure",
+          email: "michael.ross@company.com",
+          color: "from-blue-600 to-cyan-600"
+        },
+        team: [
+          {
+            name: "Alex Johnson",
+            role: "Senior Developer",
+            image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=400&fit=crop",
+            email: "alex.j@company.com",
+            color: "from-blue-600 to-cyan-600"
+          },
+          {
+            name: "Maria Garcia",
+            role: "DevOps Engineer",
+            image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop",
+            email: "maria.g@company.com",
+            color: "from-blue-600 to-cyan-600"
+          }
+        ]
+      },
+      {
+        head: {
+          name: "Emily Zhang",
+          role: "Head of Design",
+          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
+          bio: "Crafting beautiful and intuitive experiences",
+          email: "emily.zhang@company.com",
+          color: "from-orange-600 to-red-600"
+        },
+        team: [
+          {
+            name: "Sophie Brown",
+            role: "UI Designer",
+            image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop",
+            email: "sophie.b@company.com",
+            color: "from-orange-600 to-red-600"
+          },
+          {
+            name: "Lucas Kim",
+            role: "UX Researcher",
+            image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop",
+            email: "lucas.k@company.com",
+            color: "from-orange-600 to-red-600"
+          }
+        ]
+      },
+      {
+        head: {
+          name: "David Kumar",
+          role: "Head of Product",
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
+          bio: "Building products that users love",
+          email: "david.kumar@company.com",
+          color: "from-green-600 to-emerald-600"
+        },
+        team: [
+          {
+            name: "Emma Wilson",
+            role: "Product Manager",
+            image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop",
+            email: "emma.w@company.com",
+            color: "from-green-600 to-emerald-600"
+          },
+          {
+            name: "Ryan Chen",
+            role: "Product Analyst",
+            image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop",
+            email: "ryan.c@company.com",
+            color: "from-green-600 to-emerald-600"
+          }
+        ]
+      },
+      {
+        head: {
+          name: "Lisa Anderson",
+          role: "Marketing Director",
+          image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop",
+          bio: "Building impactful brands and campaigns",
+          email: "lisa.anderson@company.com",
+          color: "from-indigo-600 to-purple-600"
+        },
+        team: [
+          {
+            name: "Nina Patel",
+            role: "Content Strategist",
+            image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop",
+            email: "nina.p@company.com",
+            color: "from-indigo-600 to-purple-600"
+          },
+          {
+            name: "Tom Harris",
+            role: "Social Media Manager",
+            image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&h=400&fit=crop",
+            email: "tom.h@company.com",
+            color: "from-indigo-600 to-purple-600"
+          }
+        ]
+      }
+    ]
+  };
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -69,6 +150,78 @@ export function Notifications() {
     container.addEventListener('wheel', handleWheel, { passive: false });
     return () => container.removeEventListener('wheel', handleWheel);
   }, []);
+
+  // GSAP Initial Animation
+  useEffect(() => {
+    if (hasAnimated) return;
+
+    const tl = gsap.timeline({
+      onComplete: () => setHasAnimated(true)
+    });
+
+    // Animate CEO card
+    tl.from(ceoCardRef.current, {
+      opacity: 0,
+      y: -50,
+      scale: 0.8,
+      duration: 0.8,
+      ease: "back.out(1.7)"
+    });
+
+    // Animate connecting lines
+    tl.from(lineRefs.current[0], {
+      scaleY: 0,
+      duration: 0.4,
+      ease: "power2.out"
+    }, "-=0.3");
+
+    tl.from(lineRefs.current[1], {
+      scaleX: 0,
+      duration: 0.6,
+      ease: "power2.out"
+    }, "-=0.2");
+
+    // Animate department heads
+    deptHeadRefs.current.forEach((ref, index) => {
+      if (ref) {
+        tl.from(ref, {
+          opacity: 0,
+          y: -30,
+          scale: 0.9,
+          duration: 0.5,
+          ease: "back.out(1.5)"
+        }, `-=${0.4 - index * 0.1}`);
+      }
+    });
+
+    // Animate connecting lines to team members
+    lineRefs.current.slice(2, 6).forEach((ref, index) => {
+      if (ref) {
+        tl.from(ref, {
+          scaleY: 0,
+          duration: 0.3,
+          ease: "power2.out"
+        }, `-=${0.4 - index * 0.05}`);
+      }
+    });
+
+    // Animate team members
+    teamMemberRefs.current.forEach((ref, index) => {
+      if (ref) {
+        tl.from(ref, {
+          opacity: 0,
+          y: -20,
+          scale: 0.95,
+          duration: 0.4,
+          ease: "back.out(1.3)"
+        }, `-=${0.5 - index * 0.03}`);
+      }
+    });
+
+    return () => {
+      tl.kill();
+    };
+  }, [hasAnimated]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -92,6 +245,130 @@ export function Notifications() {
     scrollContainerRef.current.scrollLeft = scrollLeft - walk;
   };
 
+  const MemberCard = ({ member, isCEO = false, isDeptHead = false, cardRef }) => {
+    const localCardRef = useRef(null);
+
+    useEffect(() => {
+      const card = localCardRef.current;
+      if (!card) return;
+
+      // Hover animation with GSAP
+      const handleMouseEnter = () => {
+        gsap.to(card, {
+          y: -8,
+          scale: 1.02,
+          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(card, {
+          y: 0,
+          scale: 1,
+          boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      };
+
+      card.addEventListener('mouseenter', handleMouseEnter);
+      card.addEventListener('mouseleave', handleMouseLeave);
+
+      return () => {
+        card.removeEventListener('mouseenter', handleMouseEnter);
+        card.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }, []);
+
+    return (
+      <div ref={cardRef} className="w-72 flex-shrink-0">
+        <div 
+          ref={localCardRef}
+          className="relative bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-gray-200 h-full"
+        >
+          {/* Gradient border on hover */}
+          <div className={`absolute inset-0 bg-gradient-to-br ${member.color} opacity-0 hover:opacity-10 transition-opacity duration-300 pointer-events-none rounded-2xl`}></div>
+          
+          {/* Image Section */}
+          <div className="relative h-56 overflow-hidden bg-gray-100">
+            <img
+              src={member.image}
+              alt={member.name}
+              className="w-full h-full object-cover"
+              draggable="false"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          </div>
+
+          {/* Content Section */}
+          <div className="p-5 space-y-3">
+            {/* Name & Role */}
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 mb-1">
+                {member.name}
+              </h3>
+              <p className={`text-sm font-semibold bg-gradient-to-r ${member.color} bg-clip-text text-transparent`}>
+                {member.role}
+              </p>
+            </div>
+
+            {/* Bio */}
+            {member.bio && (
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {member.bio}
+              </p>
+            )}
+
+            {/* Email */}
+            {member.email && (
+              <div className="flex items-center gap-2 text-gray-500 text-xs">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span>{member.email}</span>
+              </div>
+            )}
+
+            {/* Position Badge */}
+            {isCEO && (
+              <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r ${member.color}`}>
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                CEO
+              </div>
+            )}
+            {isDeptHead && (
+              <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r ${member.color}`}>
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" />
+                  <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+                </svg>
+                DEPT HEAD
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const Arrow = ({ lineRef, direction = "down", color = "gray-400" }) => {
+    if (direction === "down") {
+      return (
+        <div ref={lineRef} className="flex flex-col items-center origin-top">
+          <div className={`w-0.5 h-12 bg-${color}`}></div>
+          <svg className={`w-6 h-6 text-${color}`} fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 3a1 1 0 01.707.293l7 7a1 1 0 01-1.414 1.414L10 5.414l-6.293 6.293a1 1 0 01-1.414-1.414l7-7A1 1 0 0110 3z" clipRule="evenodd" transform="rotate(180 10 10)" />
+          </svg>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="mx-auto my-20 flex max-w-screen-xl flex-col gap-8">
       <Card>
@@ -99,19 +376,45 @@ export function Notifications() {
           color="transparent"
           floated={false}
           shadow={false}
-          className="m-0 p-4"
+          className="m-0 p-6 border-b border-gray-200"
         >
-          <Typography variant="h5" color="blue-gray">
-            Our Team
-          </Typography>
-          <Typography variant="small" color="gray" className="mt-1">
-            Scroll horizontally to meet our team members
-          </Typography>
+          <div className="flex items-center justify-between">
+            <div>
+              <Typography variant="h4" color="blue-gray" className="font-bold">
+                Organization Structure
+              </Typography>
+              <Typography variant="small" color="gray" className="mt-2 font-normal">
+                Our leadership team and department hierarchy
+              </Typography>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                <span>Leadership</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                <span>Technology</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                <span>Design</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span>Product</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
+                <span>Marketing</span>
+              </div>
+            </div>
+          </div>
         </CardHeader>
-        <CardBody className="p-4">
+        <CardBody className="p-6">
           <div 
             ref={scrollContainerRef}
-            className={`overflow-x-auto overflow-y-hidden scrollbar-hide ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            className={`overflow-x-auto overflow-y-hidden scrollbar-hide ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} pb-4`}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}
@@ -120,75 +423,91 @@ export function Notifications() {
               scrollBehavior: isDragging ? 'auto' : 'smooth'
             }}
           >
-            <div className="flex gap-6 pb-4 px-2">
-              {teamMembers.map((member, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 w-80 group"
+            <div className="inline-flex flex-col gap-0 min-w-max px-8">
+              {/* CEO Level */}
+              <div className="flex justify-center mb-4">
+                <MemberCard 
+                  member={organizationStructure.ceo} 
+                  isCEO={true} 
+                  cardRef={ceoCardRef}
+                />
+              </div>
+
+              {/* Arrow Down */}
+              <div className="flex justify-center">
+                <Arrow lineRef={el => lineRefs.current[0] = el} direction="down" color="purple-400" />
+              </div>
+
+              {/* Horizontal Line connecting to all departments */}
+              <div className="flex justify-center my-4">
+                <div 
+                  ref={el => lineRefs.current[1] = el}
+                  className="w-full max-w-6xl h-0.5 bg-gray-300 relative origin-left"
                 >
-                  <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 transition-all duration-500 hover:scale-105 hover:shadow-2xl h-full">
-                    {/* Gradient overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${member.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none`}></div>
-                    
-                    {/* Image */}
-                    <div className="relative h-72 overflow-hidden">
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                        draggable="false"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      
-                      {/* Name overlay on image */}
-                      <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-                        <h3 className="text-2xl font-bold mb-1">
-                          {member.name}
-                        </h3>
-                        <p className="text-white/90 font-medium">
-                          {member.role}
-                        </p>
-                      </div>
+                  {/* Vertical lines down to each department */}
+                  {organizationStructure.departments.map((_, index) => (
+                    <div
+                      key={index}
+                      ref={el => lineRefs.current[2 + index] = el}
+                      className="absolute top-0 w-0.5 h-12 bg-gray-300 origin-top"
+                      style={{
+                        left: `${(100 / (organizationStructure.departments.length + 1)) * (index + 1)}%`,
+                        transform: 'translateX(-50%)'
+                      }}
+                    >
+                      <svg className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 3a1 1 0 01.707.293l7 7a1 1 0 01-1.414 1.414L10 5.414l-6.293 6.293a1 1 0 01-1.414-1.414l7-7A1 1 0 0110 3z" clipRule="evenodd" transform="rotate(180 10 10)" />
+                      </svg>
                     </div>
-
-                    {/* Content */}
-                    <div className="relative p-5 space-y-3">
-                      <p className="text-gray-600 text-sm leading-relaxed">
-                        {member.bio}
-                      </p>
-
-                      {/* Social icons */}
-                      <div className="flex gap-3">
-                        <button className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white transition-all flex items-center justify-center text-gray-700">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                          </svg>
-                        </button>
-                        <button className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-500 hover:text-white transition-all flex items-center justify-center text-gray-700">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                          </svg>
-                        </button>
-                        <button className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gradient-to-r hover:from-pink-500 hover:to-orange-500 hover:text-white transition-all flex items-center justify-center text-gray-700">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              {/* Department Heads Level */}
+              <div className="flex gap-8 justify-center mt-8 mb-4">
+                {organizationStructure.departments.map((dept, index) => (
+                  <MemberCard 
+                    key={index} 
+                    member={dept.head} 
+                    isDeptHead={true}
+                    cardRef={el => deptHeadRefs.current[index] = el}
+                  />
+                ))}
+              </div>
+
+              {/* Arrows Down to Team Members */}
+              <div className="flex gap-8 justify-center">
+                {organizationStructure.departments.map((_, index) => (
+                  <div key={index} className="w-72 flex justify-center">
+                    <Arrow direction="down" color="gray-400" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Team Members Level */}
+              <div className="flex gap-8 justify-center mt-4">
+                {organizationStructure.departments.map((dept, deptIndex) => (
+                  <div key={deptIndex} className="flex gap-4">
+                    {dept.team.map((member, memberIndex) => (
+                      <MemberCard 
+                        key={memberIndex} 
+                        member={member}
+                        cardRef={el => teamMemberRefs.current[deptIndex * 2 + memberIndex] = el}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Instruction */}
-          <div className="mt-4 text-center">
+          <div className="mt-6 pt-4 border-t border-gray-200">
             <Typography variant="small" color="gray" className="flex items-center justify-center gap-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Use mouse wheel to scroll horizontally or click and drag
+              Use mouse wheel to scroll horizontally or click and drag to explore the organization
             </Typography>
           </div>
         </CardBody>
