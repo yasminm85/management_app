@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { Dialog, DialogBody, DialogHeader } from "@material-tailwind/react";
 
 const orgData = {
-  ceo: {
+  evp: {
     name: "Yoshi Kenna",
     role: "Project Trainee",
     img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300",
     ring: "ring-red-500",
-    department: "CEO",
-    level: "CEO",
+    department: "UI",
+    level: "EVP Of Internal Audit",
   },
   departments: [
     {
@@ -99,7 +99,7 @@ function PersonCard({ person, ringColor, onClick }) {
   );
 }
 
-export function Notifications() {
+export function StrukturOrganisasi() {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
 
@@ -111,12 +111,12 @@ export function Notifications() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
 
-      {/* ===== CEO ===== */}
+      {/* ===== EVP Of Internal Audit ===== */}
       <div className="flex justify-center mb-10">
         <PersonCard
-          person={orgData.ceo}
-          ringColor={orgData.ceo.ring}
-          onClick={() => openModal(orgData.ceo)}
+          person={orgData.evp}
+          ringColor={orgData.evp.ring}
+          onClick={() => openModal(orgData.evp)}
         />
       </div>
 
@@ -208,4 +208,4 @@ export function Notifications() {
   );
 }
 
-export default Notifications;
+export default StrukturOrganisasi;

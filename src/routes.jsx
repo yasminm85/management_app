@@ -7,7 +7,7 @@ import {
   RectangleStackIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Profile, Tables, Notifications, SamplePages } from "@/pages/dashboard";
+import { Home, Profile, Tables, StrukturOrganisasi, SamplePages, StrukturFile } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 
 const icon = {
@@ -24,23 +24,29 @@ export const routes = [
         path: "/home",
         element: <Home />,
       },
-      {
-        icon: <UserCircleIcon {...icon} />,
-        name: "profile",
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        element: <Tables />,
-      },
+      // {
+      //   icon: <UserCircleIcon {...icon} />,
+      //   name: "profile",
+      //   path: "/profile",
+      //   element: <Profile />,
+      // },
+      // {
+      //   icon: <TableCellsIcon {...icon} />,
+      //   name: "tables",
+      //   path: "/tables",
+      //   element: <Tables />,
+      // },
       {
         icon: <InformationCircleIcon {...icon} />,
-        name: "notifications",
-        path: "/notifications",
-        element: <Notifications />,
+        name: "struktur organisasi",
+        path: "/struktur-organisasi",
+        element: <StrukturOrganisasi />,
+      },
+      {
+        icon: <DocumentTextIcon {...icon} />,
+        name: "struktur file",
+        path: "/struktur-file",
+        element: <StrukturFile />,
       },
        {
         icon: <DocumentTextIcon {...icon} />,
@@ -48,6 +54,7 @@ export const routes = [
         path: "/sample-pages",
         element: <SamplePages />,
       },
+      
     ],
   },
   {

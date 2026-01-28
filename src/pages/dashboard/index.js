@@ -1,8 +1,7 @@
 export * from "@/pages/dashboard/home";
 export * from "@/pages/dashboard/profile";
 export * from "@/pages/dashboard/tables";
-// export * from "@/pages/dashboard/notifications";
-export { default as Notifications } from "./notifications";
-export { default as SamplePages } from "./sample_pages.jsx";
-
+export * from "@/pages/dashboard/struktur_file";
+export * from "@/pages/dashboard/struktur_organisasi";
+export * from "@/pages/dashboard/sample_pages.jsx"
 
