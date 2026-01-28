@@ -79,13 +79,6 @@ export function SamplePages() {
 
           </div>
 
-          {/* Action */}
-          {/* <div className="mt-8 text-center">
-            <Button color="blue">
-              Create New Page
-            </Button>
-          </div> */}
-
         </CardBody>
       </Card>
     </div>
