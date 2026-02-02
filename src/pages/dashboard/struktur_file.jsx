@@ -318,21 +318,22 @@ export function StrukturFile() {
           icon: FolderIcon,
           color: "blue",
           children: [
-            {id: "4-1-1",
+            {
+              id: "4-1-1",
               name: "RKM",
               type: "folder",
               icon: FolderIcon,
               color: "green",
             },
             {
-            id: "4-1-2",
+              id: "4-1-2",
               name: "PKPT",
               type: "folder",
               icon: FolderIcon,
               color: "purple",
             },
             {
-            id: "4-1-3",
+              id: "4-1-3",
               name: "KPI",
               type: "folder",
               icon: FolderIcon,
@@ -346,23 +347,23 @@ export function StrukturFile() {
           type: "folder",
           icon: FolderIcon,
           color: "purple",
-           children: [
+          children: [
             {
-            id: "4-2-1",
+              id: "4-2-1",
               name: "Pelaporan M..",
               type: "folder",
               icon: FolderIcon,
               color: "brown",
             },
             {
-            id: "4-2-2",
+              id: "4-2-2",
               name: "Laporan Audit Internal",
               type: "folder",
               icon: FolderIcon,
               color: "orange",
             },
             {
-            id: "4-2-3",
+              id: "4-2-3",
               name: "Laporan WBS",
               type: "folder",
               icon: FolderIcon,
@@ -466,6 +467,51 @@ export function StrukturFile() {
     );
   };
 
+  const calculateStats = (nodes) => {
+    let folders = 0;
+    let files = 0;
+    let totalSizeInMB = 0;
+
+    const parseSizeToMB = (size) => {
+      if (!size) return 0;
+      const [value, unit] = size.split(" ");
+      const num = parseFloat(value);
+
+      if (unit === "KB") return num / 1024;
+      if (unit === "MB") return num;
+      if (unit === "GB") return num * 1024;
+      return 0;
+    };
+
+    const traverse = (items) => {
+      items.forEach((item) => {
+        if (item.type === "folder") {
+          folders++;
+          if (item.children) traverse(item.children);
+        }
+
+        if (item.type === "file") {
+          files++;
+          totalSizeInMB += parseSizeToMB(item.size);
+        }
+      });
+    };
+
+    traverse(nodes);
+
+    return {
+      folders,
+      files,
+      totalSize:
+        totalSizeInMB >= 1024
+          ? `${(totalSizeInMB / 1024).toFixed(2)} GB`
+          : `${totalSizeInMB.toFixed(2)} MB`,
+    };
+  };
+
+  const stats = calculateStats(treeData);
+
+
   return (
     <div className="mt-8 mb-8 flex flex-col gap-6">
       <Card>
@@ -506,20 +552,51 @@ export function StrukturFile() {
           </div>
 
           {/* Stats */}
-          <div className="mt-6 pt-4 border-t border-gray-200">
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <FolderIcon className="w-4 h-4" />
-                <span>3 Folders</span>
+          <div className="mt-4 pt-3 border-t border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50">
+                <div className="p-2 bg-blue-100 rounded-md">
+                  <FolderIcon className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <Typography className="text-base font-semibold leading-tight">
+                    {stats.folders}
+                  </Typography>
+                  <Typography className="text-xs text-gray-600">
+                    Folders
+                  </Typography>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <DocumentTextIcon className="w-4 h-4" />
-                <span>15 Files</span>
+
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50">
+                <div className="p-2 bg-green-100 rounded-md">
+                  <DocumentTextIcon className="w-4 h-4 text-green-600" />
+                </div>
+                <div>
+                  <Typography className="text-base font-semibold leading-tight">
+                    {stats.files}
+                  </Typography>
+                  <Typography className="text-xs text-gray-600">
+                    Files
+                  </Typography>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <ArchiveBoxIcon className="w-4 h-4" />
-                <span>2.1 GB Total</span>
+
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-50">
+                <div className="p-2 bg-purple-100 rounded-md">
+                  <ArchiveBoxIcon className="w-4 h-4 text-purple-600" />
+                </div>
+                <div>
+                  <Typography className="text-base font-semibold leading-tight">
+                    {stats.totalSize}
+                  </Typography>
+                  <Typography className="text-xs text-gray-600">
+                    Total Size
+                  </Typography>
+                </div>
               </div>
+
             </div>
           </div>
         </CardBody>
