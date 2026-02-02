@@ -11,10 +11,7 @@ import {
   ChevronDownIcon,
   FolderIcon,
   DocumentTextIcon,
-  PhotoIcon,
-  FilmIcon,
   MusicalNoteIcon,
-  CodeBracketIcon,
   ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
 
@@ -34,9 +31,141 @@ export function StrukturFile() {
           icon: FolderIcon,
           color: "purple",
           children: [
-            { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-            { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-            { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+            {
+              id: "1-1-1",
+              name: "Cabang A",
+              type: "folder",
+              icon: FolderIcon,
+              color: "pink",
+              children: [
+                {
+                  id: "1-1-1-1",
+                  name: "Perencanaan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                },
+                {
+                  id: "1-1-1-2",
+                  name: "Pelaksanaan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                },
+                {
+                  id: "1-1-1-3",
+                  name: "Pelaporan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                }
+              ]
+            },
+            {
+              id: "1-1-2",
+              name: "Cabang B",
+              type: "folder",
+              icon: FolderIcon,
+              color: "brown",
+              children: [
+                {
+                  id: "1-1-2-1",
+                  name: "Perencanaan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                },
+                {
+                  id: "1-1-2-2",
+                  name: "Pelaksanaan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                },
+                {
+                  id: "1-1-2-3",
+                  name: "Pelaporan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                }
+              ]
+            },
+            {
+              id: "1-1-3",
+              name: "Cabang C",
+              type: "folder",
+              icon: FolderIcon,
+              color: "green",
+              children: [
+                {
+                  id: "1-1-3-1",
+                  name: "Perencanaan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                },
+                {
+                  id: "1-1-3-2",
+                  name: "Pelaksanaan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                },
+                {
+                  id: "1-1-3-3",
+                  name: "Pelaporan",
+                  type: "folder",
+                  icon: FolderIcon,
+                  color: "purple",
+                  children: [
+                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
+                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
+                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
+                  ]
+                }
+              ]
+            },
           ]
         },
         {
@@ -46,8 +175,27 @@ export function StrukturFile() {
           icon: FolderIcon,
           color: "green",
           children: [
-            { id: "1-2-1", name: "Resume.pdf", type: "file", icon: DocumentTextIcon, size: "124 KB" },
-            { id: "1-2-2", name: "Cover Letter.docx", type: "file", icon: DocumentTextIcon, size: "86 KB" },
+            {
+              id: "1-2-1",
+              name: "Fokus A",
+              type: "folder",
+              icon: FolderIcon,
+              color: "purple",
+            },
+            {
+              id: "1-2-2",
+              name: "Fokus B",
+              type: "folder",
+              icon: FolderIcon,
+              color: "red",
+            },
+            {
+              id: "1-2-3",
+              name: "Fokus C",
+              type: "folder",
+              icon: FolderIcon,
+              color: "black",
+            },
           ]
         },
         {
@@ -55,11 +203,7 @@ export function StrukturFile() {
           name: "Investigasi",
           type: "folder",
           icon: FolderIcon,
-          color: "green",
-          children: [
-            { id: "1-2-1", name: "Resume.pdf", type: "file", icon: DocumentTextIcon, size: "124 KB" },
-            { id: "1-2-2", name: "Cover Letter.docx", type: "file", icon: DocumentTextIcon, size: "86 KB" },
-          ]
+          color: "orange",
         }
       ]
     },
@@ -68,19 +212,28 @@ export function StrukturFile() {
       name: "Review/Evaluasi",
       type: "folder",
       icon: FolderIcon,
-      color: "pink",
+      color: "brown",
       children: [
         {
           id: "2-1",
-          name: "Medan",
+          name: "Review/Evaluasi 1",
+          type: "folder",
+          icon: FolderIcon,
+          color: "green",
+        },
+        {
+          id: "2-2",
+          name: "Review/Evaluasi 2",
+          type: "folder",
+          icon: FolderIcon,
+          color: "blue",
+        },
+        {
+          id: "2-3",
+          name: "Review/Evaluasi 3",
           type: "folder",
           icon: FolderIcon,
           color: "orange",
-          children: [
-            { id: "2-1-1", name: "Perencanaan", type: "folder", icon: FolderIcon, color: "red", children: [{id: "2-1-1-1", name: "PKA", type: "file", icon: DocumentTextIcon}, {id: "2-1-1-2", name: "Proposal Audit", type: "file", icon: DocumentTextIcon}, {id: "2-1-1-3", name: "Surat Tugas", type: "file", icon: DocumentTextIcon}]},
-            { id: "2-1-2", name: "Pelaksanaan", type: "folder", icon: FolderIcon, color: "purple", children: []},
-            { id: "2-1-3", name: "Pelaporan", type: "folder", icon: FolderIcon, color: "red", children: [{id: "2-1-3-1", name: "LHS", type: "file", icon: DocumentTextIcon}] },
-          ]
         },
       ]
     },
@@ -89,10 +242,43 @@ export function StrukturFile() {
       name: "Konsultasi",
       type: "folder",
       icon: FolderIcon,
-      color: "red",
+      color: "pink",
       children: [
-        { id: "3-1", name: "tutorial.mp4", type: "video", icon: FilmIcon, size: "156 MB" },
-        { id: "3-2", name: "presentation.mov", type: "video", icon: FilmIcon, size: "89 MB" },
+        {
+          id: "3-1",
+          name: "Teknik",
+          type: "folder",
+          icon: FolderIcon,
+          color: "indigo",
+        },
+        {
+          id: "3-2",
+          name: "Keuangan",
+          type: "folder",
+          icon: FolderIcon,
+          color: "grey",
+        },
+        {
+          id: "3-3",
+          name: "Personalia & Umum",
+          type: "folder",
+          icon: FolderIcon,
+          color: "blue",
+        },
+        {
+          id: "3-4",
+          name: "Pengadaan Barang & Jasa",
+          type: "folder",
+          icon: FolderIcon,
+          color: "purple",
+        },
+        {
+          id: "3-5",
+          name: "Operasi",
+          type: "folder",
+          icon: FolderIcon,
+          color: "red",
+        },
       ]
     },
     {
@@ -100,44 +286,69 @@ export function StrukturFile() {
       name: "Supporting",
       type: "folder",
       icon: FolderIcon,
-      color: "indigo",
+      color: "green",
       children: [
-        { id: "4-1", name: "playlist.mp3", type: "audio", icon: MusicalNoteIcon, size: "8.2 MB" },
-        { id: "4-2", name: "podcast.mp3", type: "audio", icon: MusicalNoteIcon, size: "45 MB" },
+        {
+          id: "4-1",
+          name: "Perencanaan Tahunan",
+          type: "folder",
+          icon: FolderIcon,
+          color: "blue",
+          children: [
+            {id: "4-1-1",
+              name: "RKM",
+              type: "folder",
+              icon: FolderIcon,
+              color: "green",
+            },
+            {
+            id: "4-1-2",
+              name: "PKPT",
+              type: "folder",
+              icon: FolderIcon,
+              color: "purple",
+            },
+            {
+            id: "4-1-3",
+              name: "KPI",
+              type: "folder",
+              icon: FolderIcon,
+              color: "pink",
+            },
+          ]
+        },
+        {
+          id: "4-2",
+          name: "Pelaporan",
+          type: "folder",
+          icon: FolderIcon,
+          color: "purple",
+           children: [
+            {
+            id: "4-2-1",
+              name: "Pelaporan M..",
+              type: "folder",
+              icon: FolderIcon,
+              color: "brown",
+            },
+            {
+            id: "4-2-2",
+              name: "Laporan Audit Internal",
+              type: "folder",
+              icon: FolderIcon,
+              color: "orange",
+            },
+            {
+            id: "4-2-3",
+              name: "Laporan WBS",
+              type: "folder",
+              icon: FolderIcon,
+              color: "blue",
+            },
+          ]
+        },
       ]
     },
-    // {
-    //   id: "5",
-    //   name: "Projects",
-    //   type: "folder",
-    //   icon: FolderIcon,
-    //   color: "cyan",
-    //   children: [
-    //     {
-    //       id: "5-1",
-    //       name: "Website",
-    //       type: "folder",
-    //       icon: CodeBracketIcon,
-    //       color: "teal",
-    //       children: [
-    //         { id: "5-1-1", name: "index.html", type: "code", icon: CodeBracketIcon, size: "12 KB" },
-    //         { id: "5-1-2", name: "style.css", type: "code", icon: CodeBracketIcon, size: "8 KB" },
-    //         { id: "5-1-3", name: "script.js", type: "code", icon: CodeBracketIcon, size: "24 KB" },
-    //       ]
-    //     }
-    //   ]
-    // },
-    // {
-    //   id: "6",
-    //   name: "Archives",
-    //   type: "folder",
-    //   icon: FolderIcon,
-    //   color: "gray",
-    //   children: [
-    //     { id: "6-1", name: "backup.zip", type: "archive", icon: ArchiveBoxIcon, size: "1.2 GB" },
-    //     { id: "6-2", name: "old_files.tar.gz", type: "archive", icon: ArchiveBoxIcon, size: "856 MB" },
-    //   ]
-    // }
   ];
 
   const [expanded, setExpanded] = useState({});
@@ -242,7 +453,7 @@ export function StrukturFile() {
               <Typography variant="h4" color="blue-gray" className="font-bold">
                 File Explorer
               </Typography>
-              
+
             </div>
             <div className="flex gap-2">
               <IconButton

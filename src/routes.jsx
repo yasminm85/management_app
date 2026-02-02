@@ -1,8 +1,5 @@
 import {
   HomeIcon,
-  UserCircleIcon,
-  TableCellsIcon,
-  InformationCircleIcon,
   ServerStackIcon,
   RectangleStackIcon,
   DocumentTextIcon,
@@ -30,13 +27,12 @@ export const routes = [
         path: "/struktur-file",
         element: <StrukturFile />,
       },
-       {
+      {
         icon: <DocumentTextIcon {...icon} />,
         name: "sample pages",
         path: "/sample-pages",
         element: <SamplePages />,
       },
-      
     ],
   },
   {
