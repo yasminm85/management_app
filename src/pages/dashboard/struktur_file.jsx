@@ -204,6 +204,29 @@ export function StrukturFile() {
           type: "folder",
           icon: FolderIcon,
           color: "orange",
+          children: [
+            {
+              id: "1-3-1",
+              name: "Infestasi A",
+              type: "folder",
+              icon: FolderIcon,
+              color: "purple",
+            },
+            {
+              id: "1-3-2",
+              name: "Infestasi B",
+              type: "folder",
+              icon: FolderIcon,
+              color: "red",
+            },
+            {
+              id: "1-3-3",
+              name: "Infestasi C",
+              type: "folder",
+              icon: FolderIcon,
+              color: "black",
+            },
+          ]
         }
       ]
     },
