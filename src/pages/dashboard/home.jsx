@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Typography,
   Card,
@@ -26,10 +26,15 @@ import {
   ordersOverviewData,
 } from "@/data";
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
+import { AppContent } from "@/context/AppContext";
 
 export function Home() {
+
+  const {userData} = useContext(AppContent)
+
   return (
     <div className="mt-12">
+      <Typography variant="h2" className="mb-4">Hey, Welcome {userData ? userData.name : 'Admin'}</Typography>
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
         {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
           <StatisticsCard

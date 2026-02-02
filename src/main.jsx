@@ -15,16 +15,19 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@material-tailwind/react";
 import { MaterialTailwindControllerProvider } from "@/context";
+import { AppContextProvider } from "./context/AppContext";
 import "../public/css/tailwind.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <ThemeProvider>
-        <MaterialTailwindControllerProvider>
-          <App />
-        </MaterialTailwindControllerProvider>
-      </ThemeProvider>
+        <ThemeProvider>
+          <MaterialTailwindControllerProvider>
+              <AppContextProvider>
+            <App />
+              </AppContextProvider>
+          </MaterialTailwindControllerProvider>
+        </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

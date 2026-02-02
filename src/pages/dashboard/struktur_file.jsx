@@ -22,14 +22,14 @@ export function StrukturFile() {
   const treeData = [
     {
       id: "1",
-      name: "Perencanaan",
+      name: "Audit",
       type: "folder",
       icon: FolderIcon,
       color: "blue",
       children: [
         {
           id: "1-1",
-          name: "PT",
+          name: "Operasional",
           type: "folder",
           icon: FolderIcon,
           color: "purple",
@@ -41,7 +41,18 @@ export function StrukturFile() {
         },
         {
           id: "1-2",
-          name: "PA",
+          name: "Tematik",
+          type: "folder",
+          icon: FolderIcon,
+          color: "green",
+          children: [
+            { id: "1-2-1", name: "Resume.pdf", type: "file", icon: DocumentTextIcon, size: "124 KB" },
+            { id: "1-2-2", name: "Cover Letter.docx", type: "file", icon: DocumentTextIcon, size: "86 KB" },
+          ]
+        },
+        {
+          id: "1-3",
+          name: "Investigasi",
           type: "folder",
           icon: FolderIcon,
           color: "green",
@@ -54,7 +65,7 @@ export function StrukturFile() {
     },
     {
       id: "2",
-      name: "Audit",
+      name: "Review/Evaluasi",
       type: "folder",
       icon: FolderIcon,
       color: "pink",
@@ -75,7 +86,7 @@ export function StrukturFile() {
     },
     {
       id: "3",
-      name: "Revisi/Evaluasi",
+      name: "Konsultasi",
       type: "folder",
       icon: FolderIcon,
       color: "red",
@@ -84,17 +95,17 @@ export function StrukturFile() {
         { id: "3-2", name: "presentation.mov", type: "video", icon: FilmIcon, size: "89 MB" },
       ]
     },
-    // {
-    //   id: "4",
-    //   name: "Music",
-    //   type: "folder",
-    //   icon: FolderIcon,
-    //   color: "indigo",
-    //   children: [
-    //     { id: "4-1", name: "playlist.mp3", type: "audio", icon: MusicalNoteIcon, size: "8.2 MB" },
-    //     { id: "4-2", name: "podcast.mp3", type: "audio", icon: MusicalNoteIcon, size: "45 MB" },
-    //   ]
-    // },
+    {
+      id: "4",
+      name: "Supporting",
+      type: "folder",
+      icon: FolderIcon,
+      color: "indigo",
+      children: [
+        { id: "4-1", name: "playlist.mp3", type: "audio", icon: MusicalNoteIcon, size: "8.2 MB" },
+        { id: "4-2", name: "podcast.mp3", type: "audio", icon: MusicalNoteIcon, size: "45 MB" },
+      ]
+    },
     // {
     //   id: "5",
     //   name: "Projects",
