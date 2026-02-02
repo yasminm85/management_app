@@ -7,7 +7,7 @@ import {
   RectangleStackIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Profile, Tables, StrukturOrganisasi, SamplePages, StrukturFile } from "@/pages/dashboard";
+import { Home, SamplePages, StrukturFile } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 
 const icon = {
@@ -23,24 +23,6 @@ export const routes = [
         name: "dashboard",
         path: "/home",
         element: <Home />,
-      },
-      // {
-      //   icon: <UserCircleIcon {...icon} />,
-      //   name: "profile",
-      //   path: "/profile",
-      //   element: <Profile />,
-      // },
-      // {
-      //   icon: <TableCellsIcon {...icon} />,
-      //   name: "tables",
-      //   path: "/tables",
-      //   element: <Tables />,
-      // },
-      {
-        icon: <InformationCircleIcon {...icon} />,
-        name: "struktur organisasi",
-        path: "/struktur-organisasi",
-        element: <StrukturOrganisasi />,
       },
       {
         icon: <DocumentTextIcon {...icon} />,
