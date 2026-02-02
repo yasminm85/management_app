@@ -15,11 +15,11 @@ import {
   ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-import {ReviewTable} from '../dashboard/ReviewTable'
+import { ReviewTable } from '../dashboard/ReviewTable'
 
 
 export function StrukturFile() {
-  const treeData = [
+  const [treeData, setTreeData] = useState([
     {
       id: "1",
       name: "Audit",
@@ -48,11 +48,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 },
                 {
                   id: "1-1-1-2",
@@ -60,11 +55,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 },
                 {
                   id: "1-1-1-3",
@@ -72,11 +62,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 }
               ]
             },
@@ -94,11 +79,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 },
                 {
                   id: "1-1-2-2",
@@ -106,11 +86,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 },
                 {
                   id: "1-1-2-3",
@@ -118,11 +93,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 }
               ]
             },
@@ -140,11 +110,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 },
                 {
                   id: "1-1-3-2",
@@ -152,11 +117,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 },
                 {
                   id: "1-1-3-3",
@@ -164,11 +124,6 @@ export function StrukturFile() {
                   type: "folder",
                   icon: FolderIcon,
                   color: "purple",
-                  children: [
-                    { id: "1-1-1", name: "Project Proposal.docx", type: "file", icon: DocumentTextIcon, size: "2.4 MB" },
-                    { id: "1-1-2", name: "Budget 2024.xlsx", type: "file", icon: DocumentTextIcon, size: "856 KB" },
-                    { id: "1-1-3", name: "Presentation.pptx", type: "file", icon: DocumentTextIcon, size: "5.2 MB" },
-                  ]
                 }
               ]
             },
@@ -385,7 +340,15 @@ export function StrukturFile() {
         },
       ]
     },
-  ];
+  ]);
+
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    node: null,
+  });
+
 
   const [expanded, setExpanded] = useState({});
   const [showYearModal, setShowYearModal] = useState(false);
@@ -440,24 +403,97 @@ export function StrukturFile() {
     }
   };
 
+  const openContextMenu = (e, node) => {
+    e.preventDefault();
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      node,
+    });
+  };
+
+  const closeContextMenu = () => {
+    setContextMenu({ visible: false, x: 0, y: 0, node: null });
+  };
+
+  const addNewFolder = () => {
+    const folderName = prompt("Nama folder baru:");
+    if (!folderName) return;
+
+    const newFolder = {
+      id: crypto.randomUUID(),
+      name: folderName,
+      type: "folder",
+      icon: FolderIcon,
+      color: "gray",
+      children: [],
+    };
+
+    const insertFolder = (nodes) =>
+      nodes.map((n) =>
+        n.id === contextMenu.node.id
+          ? { ...n, children: [...(n.children || []), newFolder] }
+          : n.children
+            ? { ...n, children: insertFolder(n.children) }
+            : n
+      );
+
+    setTreeData(prev => insertFolder(prev));
+    setExpanded(prev => ({ ...prev, [contextMenu.node.id]: true }));
+    closeContextMenu();
+  };
+
+
+  const colorMap = {
+    blue: "text-blue-500",
+    purple: "text-purple-500",
+    pink: "text-pink-500",
+    green: "text-green-500",
+    brown: "text-amber-600",
+    red: "text-red-500",
+    orange: "text-orange-500",
+    indigo: "text-indigo-500",
+    black: "text-gray-900",
+    grey: "text-gray-500",
+    gray: "text-gray-500",
+  };
+
 
   const TreeNode = ({ node, level = 0 }) => {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = expanded[node.id];
     const Icon = node.icon;
 
+    const isActive = activeReviewId === node.id;
+
+
     return (
       <div className="select-none">
         {/* Node Item */}
         <div
-          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
+          onContextMenu={(e) => openContextMenu(e, node)}
+          className={`
+    flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer
+    transition-all duration-200 ease-in-out
+    group
+    ${isActive
+              ? "bg-blue-50 ring-1 ring-blue-300 shadow-sm"
+              : "hover:bg-gray-50 hover:shadow-sm"
+            }
+  `}
           style={{ paddingLeft: `${level * 24 + 12}px` }}
           onClick={() => {
-            if (node.name.startsWith("RE")) {
+            // if (node.name.startsWith("RE")) {
+            //   setActiveReviewId(node.id);
+            //   setViewMode("review");
+            //   return;
+            // }
+            if (node.type === "folder" && !hasChildren) {
               setActiveReviewId(node.id);
               setViewMode("review");
-              return;
             }
+
             if (["Operasional", "Tematik", "Investigasi"].includes(node.name)) {
               handleYearFolderClick(node.id);
             } else if (hasChildren) {
@@ -479,12 +515,21 @@ export function StrukturFile() {
           )}
 
           {/* Item Icon */}
-          <Icon className={`w-5 h-5 text-${node.color || 'gray'}-500 flex-shrink-0`} />
+          {/* <Icon className={`w-5 h-5 text-${node.color || 'gray'}-500 flex-shrink-0`} /> */}
+          <Icon
+            className={`w-5 h-5 ${colorMap[node.color] || "text-gray-500"} flex-shrink-0`}
+          />
+
 
           {/* Item Name */}
-          <Typography className="flex-1 text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+          <Typography
+            className={`flex-1 text-sm font-medium transition-colors${isActive
+              ? "text-blue-700"
+              : "text-gray-900 group-hover:text-blue-600"}`}
+          >
             {node.name}
           </Typography>
+
 
           {/* File Size */}
           {node.size && (
@@ -500,14 +545,16 @@ export function StrukturFile() {
             <Chip
               value={node.children.length}
               size="sm"
-              className={`bg-${node.color || 'gray'}-50 text-${node.color || 'gray'}-600`}
+              className="bg-gray-100 text-gray-600 font-normal"
             />
+
           )}
         </div>
 
         {/* Children */}
         {hasChildren && isExpanded && (
-          <div className="border-l-2 border-gray-200 ml-4">
+          <div className="ml-4 pl-2 border-l border-dashed border-gray-300">
+
             {node.children
               .filter(child => {
                 if (
@@ -572,18 +619,51 @@ export function StrukturFile() {
 
   const stats = calculateStats(treeData);
 
-
   return (
     <div className="mt-8 mb-8 flex flex-col gap-6">
       <Card>
+        {contextMenu.visible && (
+          <div
+            className="fixed inset-0 z-50"
+            onClick={closeContextMenu}
+          >
+            <div
+              className="absolute bg-white rounded-xl shadow-xl border w-48 py-1 text-sm"
+              style={{ top: contextMenu.y, left: contextMenu.x }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {contextMenu.node?.type === "folder" && (
+                <button
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                  onClick={addNewFolder}
+                >
+                  📁 New Folder
+                </button>
+              )}
+
+              <button
+                className="w-full px-4 py-2 text-left hover:bg-red-50 text-red-600"
+                onClick={() => alert("Delete coming soon")}
+              >
+                🗑 Delete
+              </button>
+            </div>
+          </div>
+        )}
+
         <CardBody className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
             <div>
-              <Typography variant="h4" color="blue-gray" className="font-bold">
+              <Typography
+                variant="h4"
+                className="font-bold tracking-tight text-gray-800"
+              >
                 File Explorer
               </Typography>
-
+              <Typography className="text-sm text-gray-500">
+                Struktur dokumen & review audit
+              </Typography>
             </div>
             <div className="flex gap-2">
               <IconButton
@@ -608,7 +688,7 @@ export function StrukturFile() {
           {/* Tree View */}
           {viewMode === "tree" && (
             <div className="space-y-1">
-              {treeData.map(node => (
+              {treeData.map((node) => (
                 <TreeNode key={node.id} node={node} />
               ))}
             </div>
@@ -621,56 +701,7 @@ export function StrukturFile() {
             />
           )}
 
-
-          {/* Stats */}
-          <div className="mt-4 pt-3 border-t border-gray-200">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50">
-                <div className="p-2 bg-blue-100 rounded-md">
-                  <FolderIcon className="w-4 h-4 text-blue-600" />
-                </div>
-                <div>
-                  <Typography className="text-base font-semibold leading-tight">
-                    {stats.folders}
-                  </Typography>
-                  <Typography className="text-xs text-gray-600">
-                    Folders
-                  </Typography>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50">
-                <div className="p-2 bg-green-100 rounded-md">
-                  <DocumentTextIcon className="w-4 h-4 text-green-600" />
-                </div>
-                <div>
-                  <Typography className="text-base font-semibold leading-tight">
-                    {stats.files}
-                  </Typography>
-                  <Typography className="text-xs text-gray-600">
-                    Files
-                  </Typography>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-50">
-                <div className="p-2 bg-purple-100 rounded-md">
-                  <ArchiveBoxIcon className="w-4 h-4 text-purple-600" />
-                </div>
-                <div>
-                  <Typography className="text-base font-semibold leading-tight">
-                    {stats.totalSize}
-                  </Typography>
-                  <Typography className="text-xs text-gray-600">
-                    Total Size
-                  </Typography>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
+          {/* Year Modal */}
           {showYearModal && (
             <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
               <div className="bg-white rounded-xl p-6 w-80 shadow-lg">
@@ -699,8 +730,6 @@ export function StrukturFile() {
               </div>
             </div>
           )}
-
-
         </CardBody>
       </Card>
     </div>
