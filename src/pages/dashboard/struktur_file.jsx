@@ -14,6 +14,9 @@ import {
   MusicalNoteIcon,
   ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+import {ReviewTable} from '../dashboard/ReviewTable'
+
 
 export function StrukturFile() {
   const treeData = [
@@ -37,6 +40,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "pink",
+              year: 2024,
               children: [
                 {
                   id: "1-1-1-1",
@@ -82,6 +86,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "brown",
+              year: 2024,
               children: [
                 {
                   id: "1-1-2-1",
@@ -127,6 +132,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "green",
+              year: 2023,
               children: [
                 {
                   id: "1-1-3-1",
@@ -181,6 +187,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "purple",
+              year: 2024
             },
             {
               id: "1-2-2",
@@ -188,6 +195,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "red",
+              year: 2023
             },
             {
               id: "1-2-3",
@@ -195,6 +203,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "black",
+              year: 2025
             },
           ]
         },
@@ -211,6 +220,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "purple",
+              year: 2024
             },
             {
               id: "1-3-2",
@@ -218,6 +228,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "red",
+              year: 2023,
             },
             {
               id: "1-3-3",
@@ -225,6 +236,7 @@ export function StrukturFile() {
               type: "folder",
               icon: FolderIcon,
               color: "black",
+              year: 2025
             },
           ]
         }
@@ -239,21 +251,21 @@ export function StrukturFile() {
       children: [
         {
           id: "2-1",
-          name: "Review/Evaluasi 1",
+          name: "RE 1",
           type: "folder",
           icon: FolderIcon,
           color: "green",
         },
         {
           id: "2-2",
-          name: "Review/Evaluasi 2",
+          name: "RE 2",
           type: "folder",
           icon: FolderIcon,
           color: "blue",
         },
         {
           id: "2-3",
-          name: "Review/Evaluasi 3",
+          name: "RE 3",
           type: "folder",
           icon: FolderIcon,
           color: "orange",
@@ -376,6 +388,15 @@ export function StrukturFile() {
   ];
 
   const [expanded, setExpanded] = useState({});
+  const [showYearModal, setShowYearModal] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [activeYearNode, setActiveYearNode] = useState(null);
+  const [viewMode, setViewMode] = useState("tree");
+  const [activeReviewId, setActiveReviewId] = useState(null);
+
+  const navigate = useNavigate();
+
+
 
   const toggleExpand = (id) => {
     setExpanded(prev => ({
@@ -402,6 +423,24 @@ export function StrukturFile() {
     setExpanded({});
   };
 
+  const handleYearFolderClick = (nodeId) => {
+    setActiveYearNode(nodeId);
+    setShowYearModal(true);
+  };
+
+
+  const handleSelectYear = (year) => {
+    setSelectedYear(year);
+    setShowYearModal(false);
+    if (activeYearNode) {
+      setExpanded(prev => ({
+        ...prev,
+        [activeYearNode]: true
+      }));
+    }
+  };
+
+
   const TreeNode = ({ node, level = 0 }) => {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = expanded[node.id];
@@ -413,7 +452,18 @@ export function StrukturFile() {
         <div
           className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
           style={{ paddingLeft: `${level * 24 + 12}px` }}
-          onClick={() => hasChildren && toggleExpand(node.id)}
+          onClick={() => {
+            if (node.name.startsWith("RE")) {
+              setActiveReviewId(node.id);
+              setViewMode("review");
+              return;
+            }
+            if (["Operasional", "Tematik", "Investigasi"].includes(node.name)) {
+              handleYearFolderClick(node.id);
+            } else if (hasChildren) {
+              toggleExpand(node.id);
+            }
+          }}
         >
           {/* Expand/Collapse Icon */}
           {hasChildren ? (
@@ -458,9 +508,20 @@ export function StrukturFile() {
         {/* Children */}
         {hasChildren && isExpanded && (
           <div className="border-l-2 border-gray-200 ml-4">
-            {node.children.map(child => (
-              <TreeNode key={child.id} node={child} level={level + 1} />
-            ))}
+            {node.children
+              .filter(child => {
+                if (
+                  ["Operasional", "Tematik", "Investigasi"].includes(node.name) &&
+                  selectedYear &&
+                  node.id === activeYearNode
+                ) {
+                  return child.year === selectedYear;
+                }
+                return true;
+              })
+              .map(child => (
+                <TreeNode key={child.id} node={child} level={level + 1} />
+              ))}
           </div>
         )}
       </div>
@@ -545,11 +606,21 @@ export function StrukturFile() {
           </div>
 
           {/* Tree View */}
-          <div className="space-y-1">
-            {treeData.map(node => (
-              <TreeNode key={node.id} node={node} />
-            ))}
-          </div>
+          {viewMode === "tree" && (
+            <div className="space-y-1">
+              {treeData.map(node => (
+                <TreeNode key={node.id} node={node} />
+              ))}
+            </div>
+          )}
+
+          {viewMode === "review" && (
+            <ReviewTable
+              reviewId={activeReviewId}
+              onBack={() => setViewMode("tree")}
+            />
+          )}
+
 
           {/* Stats */}
           <div className="mt-4 pt-3 border-t border-gray-200">
@@ -599,6 +670,37 @@ export function StrukturFile() {
 
             </div>
           </div>
+
+          {showYearModal && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+              <div className="bg-white rounded-xl p-6 w-80 shadow-lg">
+                <Typography variant="h6" className="mb-4 text-center">
+                  Pilih Tahun
+                </Typography>
+
+                <div className="flex flex-col gap-2">
+                  {[2022, 2023, 2024, 2025].map((year) => (
+                    <button
+                      key={year}
+                      onClick={() => handleSelectYear(year)}
+                      className="px-4 py-2 rounded-lg border hover:bg-blue-50 hover:border-blue-400 transition"
+                    >
+                      {year}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setShowYearModal(false)}
+                  className="mt-4 text-sm text-gray-500 hover:underline w-full"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          )}
+
+
         </CardBody>
       </Card>
     </div>
