@@ -1,0 +1,176 @@
+import React, { useContext } from "react";
+import {
+  Typography,
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Progress,
+} from "@material-tailwind/react";
+import {
+  FolderIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/solid";
+import { StatisticsCard } from "@/widgets/cards";
+import { statisticsCardsData } from "@/data";
+import { AppContent } from "@/context/AppContext";
+
+export function Home() {
+  const { userData } = useContext(AppContent);
+
+  return (
+    <div className="mt-12 space-y-10">
+
+      {/* ================= HEADER ================= */}
+      <div>
+        <Typography variant="h2" className="font-bold text-gray-800">
+          Audit Control Center
+        </Typography>
+        <Typography className="text-sm text-gray-500">
+          Ringkasan cepat kondisi audit saat ini
+        </Typography>
+      </div>
+
+      {/* ================= STAT CARDS ================= */}
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
+          <StatisticsCard
+            key={title}
+            {...rest}
+            title={title}
+            icon={React.createElement(icon, {
+              className: "w-6 h-6 text-white",
+            })}
+            footer={
+              <Typography className="text-sm text-blue-gray-600">
+                <strong className={footer.color}>{footer.value}</strong>
+                &nbsp;{footer.label}
+              </Typography>
+            }
+          />
+        ))}
+      </div>
+
+      {/* ================= INSIGHT BAR ================= */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100">
+        <CardBody className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <Typography variant="h6">📌 Insight Audit Hari Ini</Typography>
+            <Typography className="text-sm text-gray-600">
+              Audit Operasional mendominasi progres tahun berjalan
+            </Typography>
+          </div>
+          <Button color="blue" size="sm">
+            Lihat Detail
+          </Button>
+        </CardBody>
+      </Card>
+
+      {/* ================= DISTRIBUSI AUDIT ================= */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+        <Card className="border border-gray-200">
+          <CardHeader
+            floated={false}
+            shadow={false}
+            color="transparent"
+            className="p-4"
+          >
+            <Typography variant="h6">Distribusi Audit</Typography>
+          </CardHeader>
+          <CardBody className="space-y-4 pt-0">
+            {[
+              { label: "Operasional", value: 65, color: "blue" },
+              { label: "Tematik", value: 20, color: "green" },
+              { label: "Investigasi", value: 15, color: "red" },
+            ].map((item) => (
+              <div key={item.label}>
+                <div className="flex justify-between text-sm mb-1">
+                  <span>{item.label}</span>
+                  <span>{item.value}%</span>
+                </div>
+                <Progress value={item.value} color={item.color} />
+              </div>
+            ))}
+          </CardBody>
+        </Card>
+
+        {/* ================= ACTIVITY ================= */}
+        <Card className="xl:col-span-2 border border-gray-200">
+          <CardHeader
+            floated={false}
+            shadow={false}
+            color="transparent"
+            className="p-4"
+          >
+            <Typography variant="h6">Aktivitas Audit Terbaru</Typography>
+          </CardHeader>
+          <CardBody className="pt-0 space-y-4">
+
+            <div className="flex items-start gap-4">
+              <FolderIcon className="w-6 h-6 text-blue-500" />
+              <div>
+                <Typography className="text-sm font-medium">
+                  Folder Audit Cabang A dibuat
+                </Typography>
+                <Typography className="text-xs text-gray-500">
+                  10 menit lalu
+                </Typography>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <ClockIcon className="w-6 h-6 text-orange-500" />
+              <div>
+                <Typography className="text-sm font-medium">
+                  Review Audit Cabang B dimulai
+                </Typography>
+                <Typography className="text-xs text-gray-500">
+                  1 jam lalu
+                </Typography>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <CheckCircleIcon className="w-6 h-6 text-green-500" />
+              <div>
+                <Typography className="text-sm font-medium">
+                  Audit Cabang C selesai
+                </Typography>
+                <Typography className="text-xs text-gray-500">
+                  Kemarin
+                </Typography>
+              </div>
+            </div>
+
+          </CardBody>
+        </Card>
+      </div>
+
+      {/* ================= QUICK ACTION ================= */}
+      <Card className="border border-gray-200 bg-gray-50">
+        <CardBody className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <ExclamationTriangleIcon className="w-6 h-6 text-red-500" />
+            <Typography className="text-sm">
+              Ada audit yang mendekati tenggat waktu
+            </Typography>
+          </div>
+          <div className="flex gap-3">
+            <Button size="sm" variant="outlined">
+              Lihat Deadline
+            </Button>
+            <Button size="sm" color="red">
+              Prioritaskan
+            </Button>
+          </div>
+        </CardBody>
+      </Card>
+
+    </div>
+  );
+}
+
+export default Home;
