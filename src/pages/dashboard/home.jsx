@@ -16,10 +16,12 @@ import {
 import { StatisticsCard } from "@/widgets/cards";
 import { AppContent } from "@/context/AppContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function Home() {
   const { backendUrl } = useContext(AppContent);
   const [treeItems, setTreeItems] = useState([]);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export function Home() {
       title: "Audit",
       value: auditCount,
       icon: FolderIcon,
+      onClick: () => navigate("/file-explorer?category=audit"),
       footer: {
         value: "Folder",
         label: "audit aktif",
@@ -79,6 +82,7 @@ export function Home() {
       title: "Review / Evaluasi",
       value: reviewCount,
       icon: CheckCircleIcon,
+      onClick: () => navigate("/file-explorer?category=review"),
       footer: {
         value: "Folder",
         label: "review",
@@ -89,6 +93,7 @@ export function Home() {
       title: "Konsultasi",
       value: konsultasiCount,
       icon: ClockIcon,
+      onClick: () => navigate("/file-explorer?category=konsultasi"),
       footer: {
         value: "Folder",
         label: "konsultasi",
@@ -99,6 +104,7 @@ export function Home() {
       title: "Supporting",
       value: supportingCount,
       icon: ExclamationTriangleIcon,
+      onClick: () => navigate("/file-explorer?category=supporting"),
       footer: {
         value: "Dokumen",
         label: "pendukung",
@@ -106,6 +112,7 @@ export function Home() {
       },
     },
   ];
+
 
 
   return (
@@ -123,24 +130,29 @@ export function Home() {
 
       {/* ================= STAT CARDS ================= */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCards.map(({ icon, title, footer, value }) => (
-          <StatisticsCard
+        {statisticsCards.map(({ icon, title, footer, value, onClick }) => (
+          <div
             key={title}
-            title={title}
-            value={value}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-white",
-            })}
-            footer={
-              <Typography className="text-sm text-blue-gray-600">
-                <strong className={footer.color}>{footer.value}</strong>
-                &nbsp;{footer.label}
-              </Typography>
-            }
-          />
+            onClick={onClick}
+            className="cursor-pointer transition hover:-translate-y-1 hover:shadow-lg"
+          >
+            <StatisticsCard
+              title={title}
+              value={value}
+              icon={React.createElement(icon, {
+                className: "w-6 h-6 text-white",
+              })}
+              footer={
+                <Typography className="text-sm text-blue-gray-600">
+                  <strong className={footer.color}>{footer.value}</strong>
+                  &nbsp;{footer.label}
+                </Typography>
+              }
+            />
+          </div>
         ))}
-
       </div>
+
 
       {/* ================= INSIGHT BAR ================= */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100">
