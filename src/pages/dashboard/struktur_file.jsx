@@ -52,12 +52,12 @@ export function StrukturFile() {
 
     flatData.forEach(item => {
       let yearNumber = null;
-      if (item.year) {
-        const yearDate = new Date(item.year);
+      if (item.tanggal_folder) {
+        const yearDate = new Date(item.tanggal_folder);
         yearNumber = yearDate.getUTCFullYear();
 
         console.log('Parse year:', {
-          raw: item.year,
+          raw: item.tanggal_folder,
           parsed: yearDate,
           year: yearNumber
         });
