@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Typography,
   Card,
@@ -14,11 +14,99 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import { StatisticsCard } from "@/widgets/cards";
-import { statisticsCardsData } from "@/data";
 import { AppContent } from "@/context/AppContext";
+import axios from "axios";
 
 export function Home() {
-  const { userData } = useContext(AppContent);
+  const { backendUrl } = useContext(AppContent);
+  const [treeItems, setTreeItems] = useState([]);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get(
+        backendUrl + "/api/nested/all",
+        { withCredentials: true }
+      );
+      setTreeItems(res.data.items || []);
+    };
+
+    fetchData();
+  }, []);
+
+
+  const countFolderByNames = (names) => {
+    return treeItems.filter(
+      (item) =>
+        item.type === "folder" &&
+        names.some((name) =>
+          item.name.toLowerCase().includes(name.toLowerCase())
+        )
+    ).length;
+  };
+
+  const auditCount = countFolderByNames([
+    "operasional",
+    "tematik",
+    "investigasi",
+  ]);
+
+  const reviewCount = countFolderByNames([
+    "review",
+    "evaluasi",
+  ]);
+
+  const konsultasiCount = countFolderByNames([
+    "konsultasi",
+  ]);
+
+  const supportingCount = treeItems.filter(
+    (item) => item.type === "file"
+  ).length;
+
+  const statisticsCards = [
+    {
+      title: "Audit",
+      value: auditCount,
+      icon: FolderIcon,
+      footer: {
+        value: "Folder",
+        label: "audit aktif",
+        color: "text-blue-500",
+      },
+    },
+    {
+      title: "Review / Evaluasi",
+      value: reviewCount,
+      icon: CheckCircleIcon,
+      footer: {
+        value: "Folder",
+        label: "review",
+        color: "text-green-500",
+      },
+    },
+    {
+      title: "Konsultasi",
+      value: konsultasiCount,
+      icon: ClockIcon,
+      footer: {
+        value: "Folder",
+        label: "konsultasi",
+        color: "text-orange-500",
+      },
+    },
+    {
+      title: "Supporting",
+      value: supportingCount,
+      icon: ExclamationTriangleIcon,
+      footer: {
+        value: "Dokumen",
+        label: "pendukung",
+        color: "text-red-500",
+      },
+    },
+  ];
+
 
   return (
     <div className="mt-12 space-y-10">
@@ -35,11 +123,11 @@ export function Home() {
 
       {/* ================= STAT CARDS ================= */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
+        {statisticsCards.map(({ icon, title, footer, value }) => (
           <StatisticsCard
             key={title}
-            {...rest}
             title={title}
+            value={value}
             icon={React.createElement(icon, {
               className: "w-6 h-6 text-white",
             })}
@@ -51,6 +139,7 @@ export function Home() {
             }
           />
         ))}
+
       </div>
 
       {/* ================= INSIGHT BAR ================= */}
