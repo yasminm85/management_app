@@ -31,22 +31,24 @@ export function ReviewTable({ reviewId, onBack }) {
 
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [fileDate, setFileDate] = useState("");
+  const isValid =
+    fileDate &&
+    fileName.startsWith(fileDate) &&
+    /^\d{4}-\d{2}-\d{2}\s.+\..+$/.test(fileName);
 
-  const formatRegex = /^\d{4}-\d{2}-\d{2}\s.+$/;
-  const isValid = formatRegex.test(fileName);
 
   const saveFile = () => {
-    const dateFromName = fileName.substring(0, 10);
-
     setFiles((prev) => [
       ...prev,
       {
         id: crypto.randomUUID(),
         name: fileName,
-        date: dateFromName,
+        date: fileDate,
+        originalFile: true,
         version: 1,
         size: `${(Math.random() * 4 + 1).toFixed(2)} MB`,
-        uploadedAt: new Date().toLocaleDateString("id-ID", {
+        uploadedAt: new Date(fileDate).toLocaleDateString("id-ID", {
           day: "2-digit",
           month: "short",
           year: "numeric",
@@ -56,6 +58,7 @@ export function ReviewTable({ reviewId, onBack }) {
     ]);
 
     setFileName("");
+    setFileDate("");
     setShowModal(false);
   };
 
@@ -64,6 +67,15 @@ export function ReviewTable({ reviewId, onBack }) {
       f.name.toLowerCase().includes(search.toLowerCase()) &&
       (date ? f.date === date : true)
   );
+
+  const handleDateChange = (value) => {
+    setFileDate(value);
+
+    if (!value) return;
+
+    const cleanedName = fileName.replace(/^\d{4}-\d{2}-\d{2}\s*/, "");
+    setFileName(`${value} ${cleanedName}`.trim());
+  };
 
   return (
     <>
@@ -140,9 +152,8 @@ export function ReviewTable({ reviewId, onBack }) {
                 {filteredFiles.map((file, index) => (
                   <tr
                     key={file.id}
-                    className={`border-t transition ${
-                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    } hover:bg-blue-50`}
+                    className={`border-t transition ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      } hover:bg-blue-50`}
                   >
                     {/* File */}
                     <td className="py-3 px-4">
@@ -187,8 +198,8 @@ export function ReviewTable({ reviewId, onBack }) {
                           file.status === "Approved"
                             ? "green"
                             : file.status === "Draft"
-                            ? "amber"
-                            : "gray"
+                              ? "amber"
+                              : "gray"
                         }
                       />
                     </td>
@@ -203,32 +214,95 @@ export function ReviewTable({ reviewId, onBack }) {
       {/* MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[420px] shadow-xl">
-            <Typography variant="h6" className="mb-1">
-              Add Evidence
-            </Typography>
-            <Typography className="text-sm text-gray-600 mb-4">
-              Format nama file <b>WAJIB</b>:
-              <br />
-              <span className="font-mono text-xs">
-                YYYY-MM-DD Nama File.ext
-              </span>
-            </Typography>
+          <div className="bg-white rounded-2xl p-6 w-[420px] shadow-2xl border border-gray-200">
 
-            <Input
-              label="Nama File"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
-              error={fileName && !isValid}
-            />
+            {/* HEADER */}
+            <div className="mb-4">
+              <Typography variant="h6" className="font-semibold">
+                Add Evidence
+              </Typography>
+              <Typography className="text-xs text-gray-500 mt-1">
+                Format nama file harus mengikuti tanggal evidence
+              </Typography>
+            </div>
+
+
+            {/* FORMAT INFO */}
+            <div className="mb-5 p-3 rounded-lg bg-blue-50 border border-blue-100">
+              <Typography className="text-xs text-blue-700 font-mono text-center">
+                YYYY-MM-DD Nama File.ext
+              </Typography>
+            </div>
+            <div className="mb-4">
+              <Typography className="text-xs font-medium text-gray-700 mb-1">
+                Upload File
+              </Typography>
+
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,.xls,.xlsx"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  setFileName(file.name);
+                }}
+                className="w-full text-sm file:mr-3 file:py-2 file:px-4
+               file:rounded-lg file:border-0
+               file:bg-blue-50 file:text-blue-700
+               hover:file:bg-blue-100"
+              />
+
+              <Typography className="text-[11px] text-gray-500 mt-1">
+                Nama file harus mengikuti format standar
+              </Typography>
+            </div>
+
+            {/* TANGGAL */}
+            <div className="mb-4">
+              <Typography className="text-xs font-medium text-gray-700 mb-1">
+                Tanggal Evidence
+              </Typography>
+              <input
+                type="date"
+                value={fileDate}
+                onChange={(e) => handleDateChange(e.target.value)}
+                className="
+            w-full px-3 py-2 rounded-lg border
+            focus:outline-none focus:ring-2 focus:ring-blue-400
+            transition
+          "
+              />
+              <Typography className="text-[11px] text-gray-500 mt-1">
+                Tanggal ini <b>harus sama</b> dengan tanggal di nama file
+              </Typography>
+            </div>
+
+            {/* NAMA FILE */}
+            <div className="mb-1">
+              <Input
+                label="Nama File (Auto)"
+                value={fileName}
+                readOnly
+                className="bg-gray-100 cursor-not-allowed"
+                error={fileName && !isValid}
+              />
+              <Typography className="text-[11px] text-gray-500 mt-1">
+                Nama file dibuat otomatis dari tanggal evidence.
+                Jika format tidak sesuai, file <b>tidak bisa disimpan</b>.
+              </Typography>
+
+
+            </div>
 
             {fileName && !isValid && (
               <Typography className="text-xs text-red-600 mt-1">
-                ❌ Format tidak valid
+                ❌ Format tidak valid atau tanggal tidak sesuai
               </Typography>
             )}
 
-            <div className="flex justify-end gap-2 mt-6">
+            {/* ACTION */}
+            <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
               <Button variant="text" onClick={() => setShowModal(false)}>
                 Batal
               </Button>
@@ -239,6 +313,7 @@ export function ReviewTable({ reviewId, onBack }) {
           </div>
         </div>
       )}
+
     </>
   );
 }
