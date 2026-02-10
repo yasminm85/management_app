@@ -10,11 +10,8 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
   FolderIcon,
-  DocumentTextIcon,
-  MusicalNoteIcon,
-  ArchiveBoxIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
 import { ReviewTable } from '../dashboard/ReviewTable'
 import { AppContent } from "@/context/AppContext";
 import axios from "axios";
@@ -22,7 +19,7 @@ import axios from "axios";
 
 export function StrukturFile() {
   const [treeData, setTreeData] = useState([]);
-  const { backendUrl } = useContext(AppContent);
+  const { backendUrl, isLoggedin } = useContext(AppContent);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -30,15 +27,19 @@ export function StrukturFile() {
     node: null,
   });
 
-
   const [expanded, setExpanded] = useState({});
   const [showYearModal, setShowYearModal] = useState(false);
   const [selectedYear, setSelectedYear] = useState(null);
   const [activeYearNode, setActiveYearNode] = useState(null);
   const [viewMode, setViewMode] = useState("tree");
   const [activeReviewId, setActiveReviewId] = useState(null);
-
-  const navigate = useNavigate();
+  const [showAddFolderModal, setShowAddFolderModal] = useState(false);
+  const [newFolder, setNewFolder] = useState({
+    name: "",
+    parentId: "",
+    year: null,
+    color: "blue",
+  });
 
   const buildTree = (flatData) => {
     if (!Array.isArray(flatData)) {
@@ -50,11 +51,23 @@ export function StrukturFile() {
     const roots = [];
 
     flatData.forEach(item => {
+      let yearNumber = null;
+      if (item.year) {
+        const yearDate = new Date(item.year);
+        yearNumber = yearDate.getUTCFullYear();
+
+        console.log('Parse year:', {
+          raw: item.year,
+          parsed: yearDate,
+          year: yearNumber
+        });
+      }
+
       map[item._id] = {
         id: item._id,
         name: item.name,
-        type: item.type,
-        year: item.year,
+        type: "folder",
+        year: yearNumber,
         color: item.color || "gray",
         icon: FolderIcon,
         children: [],
@@ -72,22 +85,18 @@ export function StrukturFile() {
     return roots;
   };
 
-
   useEffect(() => {
     const fetchTree = async () => {
       try {
         const res = await axios.get(
-          backendUrl + "/api/nested/all",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+          backendUrl + "/api/nested/all"
+        , { withCredentials: true });
 
-        console.log("Tree data loaded:", res.data);
+        console.log("Raw data dari backend:", res.data.items);
 
         const tree = buildTree(res.data.items);
+        console.log("Tree setelah build:", tree);
+
         setTreeData(tree);
 
       } catch (err) {
@@ -95,10 +104,11 @@ export function StrukturFile() {
       }
     };
 
-    fetchTree();
-  }, []);
+    if (isLoggedin) {
+      fetchTree();
+    }
 
-
+  }, [isLoggedin]);
 
   const toggleExpand = (id) => {
     setExpanded(prev => ({
@@ -130,15 +140,24 @@ export function StrukturFile() {
     setShowYearModal(true);
   };
 
-
   const handleSelectYear = (year) => {
-    setSelectedYear(year);
     setShowYearModal(false);
+
+    setSelectedYear(year);
+
     if (activeYearNode) {
-      setExpanded(prev => ({
-        ...prev,
-        [activeYearNode]: true
-      }));
+      setExpanded(prev => {
+        const newExpanded = { ...prev };
+        delete newExpanded[activeYearNode];
+        return newExpanded;
+      });
+
+      setTimeout(() => {
+        setExpanded(prev => ({
+          ...prev,
+          [activeYearNode]: true
+        }));
+      }, 10);
     }
   };
 
@@ -156,34 +175,6 @@ export function StrukturFile() {
     setContextMenu({ visible: false, x: 0, y: 0, node: null });
   };
 
-  const addNewFolder = () => {
-    const folderName = prompt("Nama folder baru:");
-    if (!folderName) return;
-
-    const newFolder = {
-      id: crypto.randomUUID(),
-      name: folderName,
-      type: "folder",
-      icon: FolderIcon,
-      color: "gray",
-      children: [],
-    };
-
-    const insertFolder = (nodes) =>
-      nodes.map((n) =>
-        n.id === contextMenu.node.id
-          ? { ...n, children: [...(n.children || []), newFolder] }
-          : n.children
-            ? { ...n, children: insertFolder(n.children) }
-            : n
-      );
-
-    setTreeData(prev => insertFolder(prev));
-    setExpanded(prev => ({ ...prev, [contextMenu.node.id]: true }));
-    closeContextMenu();
-  };
-
-
   const colorMap = {
     blue: "text-blue-500",
     purple: "text-purple-500",
@@ -198,14 +189,89 @@ export function StrukturFile() {
     gray: "text-gray-500",
   };
 
+  const handleSaveFolder = async () => {
+    if (!newFolder.name || !newFolder.parentId) {
+      alert("Nama folder dan parent wajib diisi");
+      return;
+    }
+
+    try {
+      const yearDate = newFolder.year
+        ? new Date(newFolder.year, 0, 1)
+        : null;
+
+      await axios.post(
+        backendUrl + "/api/nested/create",
+        {
+          name: newFolder.name,
+          parentId: newFolder.parentId,
+          type: "folder",
+          tanggal_folder: yearDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const res = await axios.get(backendUrl + "/api/nested/all", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const newTree = buildTree(res.data.items);
+      setTreeData(newTree);
+
+      if (newFolder.year && newFolder.parentId) {
+        const findParent = (nodes) => {
+          for (let node of nodes) {
+            if (node.id === newFolder.parentId) return node;
+            if (node.children?.length) {
+              const found = findParent(node.children);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+
+        const parentNode = findParent(newTree);
+
+        if (parentNode && ["Operasional", "Tematik", "Investigasi"].includes(parentNode.name)) {
+          setSelectedYear(Number(newFolder.year));
+          setActiveYearNode(newFolder.parentId);
+          setExpanded(prev => ({
+            ...prev,
+            [newFolder.parentId]: true
+          }));
+        } else {
+          setExpanded(prev => ({
+            ...prev,
+            [newFolder.parentId]: true
+          }));
+        }
+      } else {
+        setExpanded(prev => ({
+          ...prev,
+          [newFolder.parentId]: true
+        }));
+      }
+
+      setNewFolder({ name: "", parentId: "", year: null, color: "blue" });
+      setShowAddFolderModal(false);
+
+    } catch (err) {
+      console.error("Gagal simpan folder:", err);
+      alert("Gagal simpan folder");
+    }
+  };
 
   const TreeNode = ({ node, level = 0 }) => {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = expanded[node.id];
     const Icon = node.icon;
-
     const isActive = activeReviewId === node.id;
-
 
     return (
       <div className="select-none">
@@ -213,22 +279,16 @@ export function StrukturFile() {
         <div
           onContextMenu={(e) => openContextMenu(e, node)}
           className={`
-  flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer
-  transition-all duration-200 ease-in-out
-  group
-  ${isActive
+            flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer
+            transition-all duration-200 ease-in-out
+            group
+            ${isActive
               ? "bg-blue-50 ring-1 ring-blue-300 shadow-sm"
               : "hover:bg-gray-100 hover:shadow-sm"
             }
-`}
-
+          `}
           style={{ paddingLeft: `${level * 24 + 12}px` }}
           onClick={() => {
-            // if (node.name.startsWith("RE")) {
-            //   setActiveReviewId(node.id);
-            //   setViewMode("review");
-            //   return;
-            // }
             if (node.type === "folder" && !hasChildren) {
               setActiveReviewId(node.id);
               setViewMode("review");
@@ -255,7 +315,6 @@ export function StrukturFile() {
           )}
 
           {/* Item Icon */}
-          {/* <Icon className={`w-5 h-5 text-${node.color || 'gray'}-500 flex-shrink-0`} /> */}
           <Icon
             className={`
               w-5 h-5 flex-shrink-0
@@ -265,16 +324,15 @@ export function StrukturFile() {
             `}
           />
 
-
           {/* Item Name */}
           <Typography
-            className={`flex-1 text-sm font-medium transition-colors${isActive
-              ? "text-blue-700"
-              : "text-gray-900 group-hover:text-blue-600"}`}
+            className={`flex-1 text-sm font-medium transition-colors ${isActive
+                ? "text-blue-700"
+                : "text-gray-900 group-hover:text-blue-600"
+              }`}
           >
             {node.name}
           </Typography>
-
 
           {/* File Size */}
           {node.size && (
@@ -292,14 +350,12 @@ export function StrukturFile() {
               size="sm"
               className="bg-gray-100 text-gray-600 font-normal"
             />
-
           )}
         </div>
 
         {/* Children */}
         {hasChildren && isExpanded && (
           <div className="ml-4 pl-2 border-l border-dashed border-gray-300">
-
             {node.children
               .filter(child => {
                 if (
@@ -307,6 +363,13 @@ export function StrukturFile() {
                   selectedYear &&
                   node.id === activeYearNode
                 ) {
+                  console.log('Filtering:', {
+                    childName: child.name,
+                    childYear: child.year,
+                    selectedYear: selectedYear,
+                    match: child.year === selectedYear
+                  });
+
                   return child.year === selectedYear;
                 }
                 return true;
@@ -320,49 +383,22 @@ export function StrukturFile() {
     );
   };
 
-  const calculateStats = (nodes) => {
-    let folders = 0;
-    let files = 0;
-    let totalSizeInMB = 0;
+  const getFolderOptions = (nodes, level = 0) => {
+    let result = [];
 
-    const parseSizeToMB = (size) => {
-      if (!size) return 0;
-      const [value, unit] = size.split(" ");
-      const num = parseFloat(value);
-
-      if (unit === "KB") return num / 1024;
-      if (unit === "MB") return num;
-      if (unit === "GB") return num * 1024;
-      return 0;
-    };
-
-    const traverse = (items) => {
-      items.forEach((item) => {
-        if (item.type === "folder") {
-          folders++;
-          if (item.children) traverse(item.children);
-        }
-
-        if (item.type === "file") {
-          files++;
-          totalSizeInMB += parseSizeToMB(item.size);
-        }
+    nodes.forEach(node => {
+      result.push({
+        id: node.id,
+        label: `${"— ".repeat(level)}${node.name}`,
       });
-    };
 
-    traverse(nodes);
+      if (node.children?.length) {
+        result = result.concat(getFolderOptions(node.children, level + 1));
+      }
+    });
 
-    return {
-      folders,
-      files,
-      totalSize:
-        totalSizeInMB >= 1024
-          ? `${(totalSizeInMB / 1024).toFixed(2)} GB`
-          : `${totalSizeInMB.toFixed(2)} MB`,
-    };
+    return result;
   };
-
-  const stats = calculateStats(treeData);
 
   return (
     <div className="mt-8 mb-8 flex flex-col gap-6">
@@ -371,33 +407,10 @@ export function StrukturFile() {
           <div
             className="fixed inset-0 z-50"
             onClick={closeContextMenu}
-          >
-            <div
-              className="absolute bg-white rounded-xl shadow-xl border w-48 py-1 text-sm"
-              style={{ top: contextMenu.y, left: contextMenu.x }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {contextMenu.node?.type === "folder" && (
-                <button
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                  onClick={addNewFolder}
-                >
-                  📁 New Folder
-                </button>
-              )}
-
-              <button
-                className="w-full px-4 py-2 text-left hover:bg-red-50 text-red-600"
-                onClick={() => alert("Delete coming soon")}
-              >
-                🗑 Delete
-              </button>
-            </div>
-          </div>
+          />
         )}
 
         <CardBody className="bg-gradient-to-br from-blue-50 via-white to-purple-50 shadow-xl border border-gray-200">
-
           {/* Header */}
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
             <div className="flex items-center gap-3">
@@ -418,44 +431,46 @@ export function StrukturFile() {
               </div>
             </div>
 
-            <div className="flex gap-2">
+            {/* ACTION BUTTONS */}
+            <div className="flex items-center gap-2">
+              {/* Expand */}
               <IconButton
                 variant="outlined"
                 size="sm"
                 onClick={expandAll}
-                className="
-        border-blue-300 text-blue-600
-        hover:bg-blue-50 hover:border-blue-400
-      "
+                className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
               >
                 <ChevronDownIcon className="w-4 h-4" />
               </IconButton>
 
+              {/* Collapse */}
               <IconButton
                 variant="outlined"
                 size="sm"
                 onClick={collapseAll}
-                className="
-        border-purple-300 text-purple-600
-        hover:bg-purple-50 hover:border-purple-400
-      "
+                className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
               >
                 <ChevronRightIcon className="w-4 h-4" />
+              </IconButton>
+
+              {/* Divider */}
+              <div className="w-px h-6 bg-gray-300 mx-1" />
+
+              {/* ➕ Tambah Folder */}
+              <IconButton
+                variant="gradient"
+                size="sm"
+                onClick={() => setShowAddFolderModal(true)}
+                className="group from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-md"
+              >
+                <PlusIcon className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-90 group-hover:scale-110" />
               </IconButton>
             </div>
           </div>
 
-
           {/* Tree View */}
           {viewMode === "tree" && (
-            <div className="
-    space-y-1
-    bg-white/70 backdrop-blur
-    rounded-2xl p-4
-    border border-gray-200
-    shadow-inner
-    max-h-[65vh] overflow-y-auto
-  ">
+            <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner max-h-[65vh] overflow-y-auto">
               {treeData.map((node) => (
                 <TreeNode key={node.id} node={node} />
               ))}
@@ -471,7 +486,6 @@ export function StrukturFile() {
             </div>
           )}
 
-
           {/* Year Modal */}
           {showYearModal && (
             <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -485,11 +499,7 @@ export function StrukturFile() {
                     <button
                       key={year}
                       onClick={() => handleSelectYear(year)}
-                      className="
-          px-4 py-2 rounded-xl border
-          hover:bg-blue-50 hover:border-blue-400
-          transition font-medium
-        "
+                      className="px-4 py-2 rounded-xl border hover:bg-blue-50 hover:border-blue-400 transition font-medium"
                     >
                       {year}
                     </button>
@@ -503,7 +513,113 @@ export function StrukturFile() {
                   Batal
                 </button>
               </div>
+            </div>
+          )}
 
+          {/* Add Folder Modal */}
+          {showAddFolderModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              {/* Overlay */}
+              <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                onClick={() => setShowAddFolderModal(false)}
+              />
+
+              {/* Modal */}
+              <div className="relative bg-white rounded-3xl w-[420px] shadow-2xl border border-gray-200 animate-[fadeIn_0.25s_ease-out]">
+                {/* Header */}
+                <div className="flex items-center gap-3 px-6 py-4 border-b">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 shadow">
+                    <FolderIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <Typography className="font-semibold text-gray-800">
+                      Tambah Folder Baru
+                    </Typography>
+                    <Typography className="text-xs text-gray-500">
+                      Buat folder untuk pengelompokan dokumen
+                    </Typography>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="px-6 py-5 space-y-4">
+                  {/* Nama Folder */}
+                  <div>
+                    <Typography className="text-xs font-medium text-gray-600 mb-1">
+                      Nama Folder
+                    </Typography>
+                    <input
+                      type="text"
+                      placeholder="Contoh: Laporan Audit"
+                      value={newFolder.name}
+                      onChange={(e) =>
+                        setNewFolder({ ...newFolder, name: e.target.value })
+                      }
+                      className="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+                    />
+                  </div>
+
+                  {/* Parent Folder */}
+                  <div>
+                    <Typography className="text-xs font-medium text-gray-600 mb-1">
+                      Simpan di Folder
+                    </Typography>
+                    <select
+                      value={newFolder.parentId}
+                      onChange={(e) =>
+                        setNewFolder({ ...newFolder, parentId: e.target.value })
+                      }
+                      className="w-full px-4 py-2.5 rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+                    >
+                      <option value="">Pilih folder tujuan</option>
+                      {getFolderOptions(treeData).map((opt) => (
+                        <option key={opt.id} value={opt.id}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Tahun */}
+                  <div>
+                    <Typography className="text-xs font-medium text-gray-600 mb-1">
+                      Tahun (Opsional)
+                    </Typography>
+                    <select
+                      value={newFolder.year || ""}
+                      onChange={(e) =>
+                        setNewFolder({ ...newFolder, year: e.target.value ? Number(e.target.value) : null })
+                      }
+                      className="w-full px-4 py-2.5 rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+                    >
+                      <option value="">Semua Tahun</option>
+                      {[2022, 2023, 2024, 2025].map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-end gap-2 px-6 py-4 border-t bg-gray-50 rounded-b-3xl">
+                  <button
+                    onClick={() => setShowAddFolderModal(false)}
+                    className="px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-200 transition"
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    onClick={handleSaveFolder}
+                    className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-md transition"
+                  >
+                    Simpan Folder
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </CardBody>
