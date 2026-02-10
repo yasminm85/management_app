@@ -22,20 +22,23 @@ export function Home() {
   const { backendUrl } = useContext(AppContent);
   const [treeItems, setTreeItems] = useState([]);
   const navigate = useNavigate();
-
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await axios.get(
-        backendUrl + "/api/nested/all",
-        { withCredentials: true }
-      );
-      setTreeItems(res.data.items || []);
+    const fetchActivity = async () => {
+      try {
+        const res = await axios.get(
+          backendUrl + "/api/activity?limit=5",
+          { withCredentials: true }
+        );
+        setActivities(res.data.items || []);
+      } catch (err) {
+        console.error("Gagal ambil activity", err);
+      }
     };
 
-    fetchData();
-  }, []);
-
+    fetchActivity();
+  }, [backendUrl]);
 
   const countFolderByNames = (names) => {
     return treeItems.filter(
@@ -113,6 +116,18 @@ export function Home() {
     },
   ];
 
+  const activityIcon = (action) => {
+    switch (action) {
+      case "CREATE_FOLDER":
+        return <FolderIcon className="w-6 h-6 text-blue-500" />;
+      case "UPLOAD_EVIDENCE":
+        return <CheckCircleIcon className="w-6 h-6 text-green-500" />;
+      case "START_REVIEW":
+        return <ClockIcon className="w-6 h-6 text-orange-500" />;
+      default:
+        return <ExclamationTriangleIcon className="w-6 h-6 text-gray-400" />;
+    }
+  };
 
 
   return (
@@ -210,41 +225,32 @@ export function Home() {
           </CardHeader>
           <CardBody className="pt-0 space-y-4">
 
-            <div className="flex items-start gap-4">
-              <FolderIcon className="w-6 h-6 text-blue-500" />
-              <div>
-                <Typography className="text-sm font-medium">
-                  Folder Audit Cabang A dibuat
-                </Typography>
-                <Typography className="text-xs text-gray-500">
-                  10 menit lalu
-                </Typography>
-              </div>
-            </div>
+            <CardBody className="pt-0 space-y-4">
 
-            <div className="flex items-start gap-4">
-              <ClockIcon className="w-6 h-6 text-orange-500" />
-              <div>
-                <Typography className="text-sm font-medium">
-                  Review Audit Cabang B dimulai
+              {activities.length === 0 && (
+                <Typography className="text-sm text-gray-500">
+                  Belum ada aktivitas audit
                 </Typography>
-                <Typography className="text-xs text-gray-500">
-                  1 jam lalu
-                </Typography>
-              </div>
-            </div>
+              )}
 
-            <div className="flex items-start gap-4">
-              <CheckCircleIcon className="w-6 h-6 text-green-500" />
-              <div>
-                <Typography className="text-sm font-medium">
-                  Audit Cabang C selesai
-                </Typography>
-                <Typography className="text-xs text-gray-500">
-                  Kemarin
-                </Typography>
-              </div>
-            </div>
+              {activities.map((item) => (
+                <div key={item._id} className="flex items-start gap-4">
+                  {activityIcon(item.action)}
+
+                  <div>
+                    <Typography className="text-sm font-medium">
+                      {item.message}
+                    </Typography>
+                    <Typography className="text-xs text-gray-500">
+                      {item.createdBy?.name || "System"} •{" "}
+                      {new Date(item.createdAt).toLocaleString("id-ID")}
+                    </Typography>
+                  </div>
+                </div>
+              ))}
+
+            </CardBody>
+
 
           </CardBody>
         </Card>
