@@ -26,6 +26,14 @@ const nestedSchema = new mongoose.Schema({
         ref: "fs.files", 
         default: null,
     },
+    tanggal_folder: {
+        type: Date,
+        default: null,
+    },
+    tanggal_file: {
+        type: Date,
+        default: null,
+    },
 
     mimetype: String,
     filename: String,
