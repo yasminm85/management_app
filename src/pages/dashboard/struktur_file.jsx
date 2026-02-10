@@ -90,14 +90,19 @@ export function StrukturFile() {
       try {
         const res = await axios.get(
           backendUrl + "/api/nested/all"
-        , { withCredentials: true });
+          , { withCredentials: true });
 
         console.log("Raw data dari backend:", res.data.items);
 
-        const tree = buildTree(res.data.items);
-        console.log("Tree setelah build:", tree);
+        const items =
+          res.data.items ||
+          res.data.data ||
+          res.data ||
+          [];
 
+        const tree = buildTree(items);
         setTreeData(tree);
+
 
       } catch (err) {
         console.error("Gagal load tree:", err);
@@ -209,20 +214,22 @@ export function StrukturFile() {
           tanggal_folder: yearDate,
         },
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
-      const res = await axios.get(backendUrl + "/api/nested/all", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await axios.get(backendUrl + "/api/nested/all", { withCredentials: true }
+      );
 
-      const newTree = buildTree(res.data.items);
+      const items =
+        res.data.items ||
+        res.data.data ||
+        res.data ||
+        [];
+
+      const newTree = buildTree(items);
       setTreeData(newTree);
+
 
       if (newFolder.year && newFolder.parentId) {
         const findParent = (nodes) => {
@@ -327,8 +334,8 @@ export function StrukturFile() {
           {/* Item Name */}
           <Typography
             className={`flex-1 text-sm font-medium transition-colors ${isActive
-                ? "text-blue-700"
-                : "text-gray-900 group-hover:text-blue-600"
+              ? "text-blue-700"
+              : "text-gray-900 group-hover:text-blue-600"
               }`}
           >
             {node.name}
