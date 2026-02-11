@@ -3,7 +3,7 @@ import Nested from "../models/nestedModel.js";
 export const createNestedItem = async (req, res) => {
     try {
 
-        const { name, type, parentId, isStatic, fileId, mimetype, filename, size } = req.body;
+        const { name, type, parentId, isStatic, fileId, mimetype, filename, size, tanggal_folder, tanggal_file } = req.body;
 
         const items = Nested.create({
             name: name,
@@ -11,6 +11,8 @@ export const createNestedItem = async (req, res) => {
             parentId: parentId || null,
             isStatic: isStatic || false,
             fileId: fileId || null,
+            tanggal_folder: tanggal_folder || null,
+            tanggal_file: tanggal_file || null,
             mimetype: mimetype || null,
             filename: filename || null,
             size: size || null
