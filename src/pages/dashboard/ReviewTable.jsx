@@ -22,10 +22,8 @@ export function ReviewTable({ onBack }) {
       id: 1,
       name: "2024-01-12 Laporan Audit Jan.pdf",
       date: "2024-01-12",
-      version: 1,
       size: "2.4 MB",
       uploadedAt: "12 Jan 2024",
-      status: "Approved",
     },
   ]);
 
@@ -46,14 +44,12 @@ export function ReviewTable({ onBack }) {
         name: fileName,
         date: fileDate,
         originalFile: true,
-        version: 1,
         size: `${(Math.random() * 4 + 1).toFixed(2)} MB`,
         uploadedAt: new Date(fileDate).toLocaleDateString("id-ID", {
           day: "2-digit",
           month: "short",
           year: "numeric",
         }),
-        status: "Draft",
       },
     ]);
 
@@ -113,7 +109,7 @@ export function ReviewTable({ onBack }) {
         </div>
 
         <Typography variant="h4" className="font-semibold text-gray-800 mb-1">
-          Daftar File 
+          Daftar File
         </Typography>
         <Typography className="text-sm text-gray-500 mb-4">
           Evidence & dokumen pendukung hasil review
@@ -135,90 +131,73 @@ export function ReviewTable({ onBack }) {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden rounded-xl border">
+        <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100">
+            <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
               <tr>
-                <th className="text-left py-3 px-4">File</th>
-                <th className="py-3 px-4">Versi</th>
-                <th className="py-3 px-4">Tanggal</th>
-                <th className="py-3 px-4">Ukuran</th>
-                <th className="py-3 px-4">Status</th>
+                <th className="text-left py-3 px-4 font-semibold text-blue-900">
+                  Nama File
+                </th>
+                <th className="py-3 px-4 text-center font-semibold text-blue-900">
+                  Tanggal
+                </th>
+                <th className="py-3 px-4 text-center font-semibold text-blue-900">
+                  Ukuran
+                </th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-blue-50">
               {filteredFiles.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="py-12 text-center text-gray-500"
-                  >
-                    <ArrowUpTrayIcon className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                    Belum ada evidence pada folder ini
+                  <td colSpan={3} className="py-16 text-center">
+                    <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center">
+                      <ArrowUpTrayIcon className="w-7 h-7 text-blue-600" />
+                    </div>
+                    <div className="text-sm font-semibold text-gray-700">
+                      Belum ada evidence
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Upload dokumen untuk melengkapi audit
+                    </div>
                   </td>
                 </tr>
               )}
 
-              {filteredFiles.map((file, index) => (
-                <tr
-                  key={file.id}
-                  className={`border-t transition ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    } `}
-                >
-                  {/* File */}
-                  <td className="py-3 px-4">
+              {filteredFiles.map((file) => (
+                <tr key={file.id}>
+                  {/* FILE */}
+                  <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
-                      <DocumentTextIcon className="w-5 h-5 text-blue-600" />
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-indigo-500 flex items-center justify-center shadow-sm">
+                        <DocumentTextIcon className="w-5 h-5 text-white" />
+                      </div>
+
                       <div>
                         <div className="font-medium text-gray-900">
                           {file.name}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Evidence Document
                         </div>
                       </div>
                     </div>
                   </td>
 
-                  {/* Version */}
-                  <td className="py-3 px-4 text-center">
-                    <Chip
-                      value={`v${file.version}`}
-                      size="sm"
-                      className="bg-blue-100 text-blue-700"
-                    />
-                  </td>
-
-                  {/* Date */}
-                  <td className="py-3 px-4 text-center text-gray-700">
+                  {/* DATE */}
+                  <td className="py-4 px-4 text-center text-gray-700">
                     {file.uploadedAt}
                   </td>
 
-                  {/* Size */}
-                  <td className="py-3 px-4 text-center text-gray-700">
-                    {file.size}
-                  </td>
-
-                  {/* Status */}
-                  <td className="py-3 px-4 text-center">
-                    <Chip
-                      value={file.status}
-                      size="sm"
-                      color={
-                        file.status === "Approved"
-                          ? "green"
-                          : file.status === "Draft"
-                            ? "amber"
-                            : "gray"
-                      }
-                    />
+                  {/* SIZE */}
+                  <td className="py-4 px-4 text-center">
+                    <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-black-700">
+                      {file.size}
+                    </span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
       </CardBody>
 
       {/* MODAL */}
