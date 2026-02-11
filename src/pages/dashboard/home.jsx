@@ -19,26 +19,26 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export function Home() {
-  const { backendUrl } = useContext(AppContent);
+  const { backendUrl, userData, setUserData, setIsLoggedin } = useContext(AppContent);
   const [treeItems, setTreeItems] = useState([]);
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
 
-  useEffect(() => {
-    const fetchActivity = async () => {
-      try {
-        const res = await axios.get(
-          backendUrl + "/api/activity?limit=5",
-          { withCredentials: true }
-        );
-        setActivities(res.data.items || []);
-      } catch (err) {
-        console.error("Gagal ambil activity", err);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchActivity = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         backendUrl + "/api/activity?limit=5",
+  //         { withCredentials: true }
+  //       );
+  //       setActivities(res.data.items || []);
+  //     } catch (err) {
+  //       console.error("Gagal ambil activity", err);
+  //     }
+  //   };
 
-    fetchActivity();
-  }, [backendUrl]);
+  //   fetchActivity();
+  // }, [backendUrl]);
 
   const countFolderByNames = (names) => {
     return treeItems.filter(

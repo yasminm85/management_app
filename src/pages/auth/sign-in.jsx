@@ -1,126 +1,156 @@
 import { useContext, useState } from "react";
 import {
-  Card,
   Input,
-  Checkbox,
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
-import { useNavigate } from "react-router-dom";
 import { AppContent } from "@/context/AppContext";
 import { toast } from "react-toastify";
-
 import axios from "axios";
 
-export function SignIn() {
+import "./sign-in.css";
 
+export function SignIn() {
   const navigate = useNavigate();
-  
   const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContent);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const togglePasswordVisibility = () => setShowPassword(prev => !prev);
 
   const onSubmitHandler = async (e) => {
-
+    e.preventDefault();
     try {
-      e.preventDefault();
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        backendUrl + "/api/auth/login",
+        { email, password }
+      );
 
-      axios.defaults.withCredentials = true
-
-      const {data}  = await axios.post(backendUrl + '/api/auth/login', { email, password })
-      console.log(data);
       if (data.success) {
-        setIsLoggedin(true)
-        getUserData()
-        navigate('/home')
+        setIsLoggedin(true);
+        getUserData();
+        navigate("/home");
       } else {
-        toast.error(data.message)
+        toast.error(data.message);
       }
-    } catch (error) {
-      toast.error(error.message)
+    } catch (err) {
+      toast.error(err.message);
     }
-
-  }
+  };
 
   return (
-    <section className="m-8 flex gap-4">
-      <div className="w-full lg:w-3/5 mt-24">
-        <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Sign In</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to Sign In.</Typography>
+    <section className="login-page">
+
+      {/* === BACKGROUND IMAGE === */}
+      <div className="login-bg" />
+
+      {/* === DARK OVERLAY === */}
+      <div className="login-overlay" />
+
+      {/* === PESAWAT ANIMASI === */}
+      <div className="airplane airplane-1">
+        <img src="/img/airplane.png" alt="airplane" className="w-full h-full object-contain" />
+      </div>
+
+      {/* === CONTENT === */}
+      <div className="login-content">
+
+        <div className="login-grid">
+
+          {/* === FORM === */}
+          <div className="login-form-wrapper">
+            <div className="login-glass">
+
+              <Typography variant="h2" className="font-bold text-center mb-2">
+                Sign In
+              </Typography>
+              <Typography className="text-center text-white-gray-600 mb-6">
+                Enter your email and password
+              </Typography>
+
+              <form onSubmit={onSubmitHandler} className="flex flex-col gap-6">
+
+                <div>
+                  <Typography variant="small" className="font-medium mb-1">
+                    Your email
+                  </Typography>
+                  <Input
+                    size="lg"
+                    placeholder="name@mail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="login-input"
+                    labelProps={{
+                      className: "before:content-none after:content-none",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <Typography variant="small" className="font-medium mb-1">
+                    Password
+                  </Typography>
+
+                  {/* Wrapper untuk input + icon */}
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      size="lg"
+                      placeholder="********"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="login-input pr-10"
+                      labelProps={{
+                        className: "before:content-none after:content-none",
+                      }}
+                    />
+
+                    {/* Icon di luar Input component */}
+                    <span
+                      onClick={togglePasswordVisibility}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                    >
+                      {showPassword ? (
+                        <EyeSlashIcon className="h-5 w-5 text-gray-600 hover:text-gray-800 transition-colors" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5 text-gray-600 hover:text-gray-800 transition-colors" />
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <Typography variant="small" className="text-gray-700">
+                    Forgot Password?
+                  </Typography>
+                </div>
+
+                <Button type="submit" fullWidth className="bg-blue-600 hover:bg-blue-700 shadow-md">
+                  Sign In
+                </Button>
+
+                <Typography className="text-center text-white-gray-600">
+                  Not registered?
+                  <Link to="/auth/sign-up" className="ml-1 font-medium text-gray-900">
+                    Create account
+                  </Link>
+                </Typography>
+
+              </form>
+            </div>
+          </div>
+
+          {/* === SPACER KANAN (BIAR TOWER KELIATAN) === */}
+          <div className="login-spacer" />
+          
+
         </div>
-        <form onSubmit={onSubmitHandler} className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
-          <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-              Your email
-            </Typography>
-            <Input
-              size="lg"
-              placeholder="name@mail.com"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-              onChange={e => setEmail(e.target.value)}
-              value={email}
-            />
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-              Password
-            </Typography>
-            <Input
-              type={showPassword ? "text" : "password"}
-              size="lg"
-              placeholder="********"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-              onChange={e => setPassword(e.target.value)}
-              value={password}
-              icon={
-                <span onClick={togglePasswordVisibility} className="cursor-pointer">
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-500" />
-                  )}
-                </span>
-              }
-            />
-          </div>
-
-          <div className="flex items-center justify-between gap-2 mt-6">
-            <Typography variant="small" className="font-medium text-gray-900">
-              <a href="#">
-                Forgot Password?
-              </a>
-            </Typography>
-          </div>
-
-          <Button type="submit" className="mt-6" fullWidth>
-            Sign In
-          </Button>
-
-          <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
-            Not registered?
-            <Link to="/auth/sign-up" className="text-gray-900 ml-1">Create account</Link>
-          </Typography>
-        </form>
-
       </div>
-      <div className="w-2/5 h-full hidden lg:block">
-        <img
-          src="/img/pattern.png"
-          className="h-full w-full object-cover rounded-3xl"
-        />
-      </div>
-
     </section>
   );
 }
