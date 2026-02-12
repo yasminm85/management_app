@@ -104,7 +104,7 @@ export function ReviewTable({ onBack }) {
             onClick={() => setShowModal(true)}
           >
             <PlusIcon className="w-4 h-4" />
-            Add Evidence
+            Add File
           </Button>
         </div>
 
@@ -112,7 +112,7 @@ export function ReviewTable({ onBack }) {
           Daftar File
         </Typography>
         <Typography className="text-sm text-gray-500 mb-4">
-          Evidence & dokumen pendukung hasil review
+          File pendukung hasil review
         </Typography>
 
         {/* Filter */}
@@ -155,7 +155,7 @@ export function ReviewTable({ onBack }) {
                       <ArrowUpTrayIcon className="w-7 h-7 text-blue-600" />
                     </div>
                     <div className="text-sm font-semibold text-gray-700">
-                      Belum ada evidence
+                      Belum ada file
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
                       Upload dokumen untuk melengkapi audit
@@ -208,10 +208,10 @@ export function ReviewTable({ onBack }) {
             {/* HEADER */}
             <div className="mb-4">
               <Typography variant="h6" className="font-semibold">
-                Add Evidence
+                Add File
               </Typography>
               <Typography className="text-xs text-gray-500 mt-1">
-                Format nama file harus mengikuti tanggal evidence
+                Format nama file harus mengikuti tanggal yang terdapat dalam file.
               </Typography>
             </div>
 
@@ -250,7 +250,7 @@ export function ReviewTable({ onBack }) {
             {/* TANGGAL */}
             <div className="mb-4">
               <Typography className="text-xs font-medium text-gray-700 mb-1">
-                Tanggal Evidence
+                Tanggal File
               </Typography>
               <input
                 type="date"
