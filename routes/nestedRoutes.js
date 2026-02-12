@@ -1,10 +1,13 @@
 import express from 'express';
-import { createNestedItem, getAllItems } from '../controller/nestedController.js';
+import { createNestedItem, getAllItems, getItemById, getFile } from '../controller/nestedController.js';
 import userAuth from '../middleware/userAuth.js';
+import uploadFile  from '../middleware/uploadFile.js';
 
 const nestedRouter = express.Router();
 
 nestedRouter.get('/all', userAuth, getAllItems);
-nestedRouter.post('/create', userAuth, createNestedItem);
+nestedRouter.post('/create', uploadFile.single('file_nested'), userAuth, createNestedItem);
+nestedRouter.get('/files/:id', userAuth, getItemById);
+nestedRouter.get('/get-file/:id', userAuth, getFile);
 
 export default nestedRouter;
