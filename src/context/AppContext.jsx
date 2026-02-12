@@ -9,6 +9,7 @@ export const AppContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL
     const [isLoggedin, setIsLoggedin] = useState(false)
     const [userData, setUserData] = useState(false)
+    const [loading, setLoading] = useState(true)
 
 
     const getAuthState = async () => {
@@ -38,6 +39,8 @@ export const AppContextProvider = (props) => {
             data.success ? setUserData(data.userData) : toast.error(data.message)
         } catch (error) {
             toast.error(error.message)
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -49,7 +52,8 @@ export const AppContextProvider = (props) => {
         backendUrl,
         isLoggedin, setIsLoggedin,
         userData, setUserData,
-        getUserData
+        getUserData,
+        loading
     }
 
     return (

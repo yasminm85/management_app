@@ -6,56 +6,155 @@ import {
   Button,
   Chip,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   PlusIcon,
   DocumentTextIcon,
   ArrowUpTrayIcon,
 } from "@heroicons/react/24/outline";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { AppContent } from "@/context/AppContext";
 
-export function ReviewTable({ onBack }) {
+export function ReviewTable({ reviewId, parentId, onBack }) {
+  const { backendUrl } = useContext(AppContent);
   const [search, setSearch] = useState("");
   const [date, setDate] = useState("");
+  const [newFile, setNewFile] = useState({
+    name: "",
+    file: null,
+  });
 
-  const [files, setFiles] = useState([
-    {
-      id: 1,
-      name: "2024-01-12 Laporan Audit Jan.pdf",
-      date: "2024-01-12",
-      size: "2.4 MB",
-      uploadedAt: "12 Jan 2024",
-    },
-  ]);
+  const [files, setFiles] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState("");
   const [fileDate, setFileDate] = useState("");
+  const [loading, setLoading] = useState(false);
   const isValid =
     fileDate &&
     fileName.startsWith(fileDate) &&
     /^\d{4}-\d{2}-\d{2}\s.+\..+$/.test(fileName);
 
 
-  const saveFile = () => {
-    setFiles((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        name: fileName,
-        date: fileDate,
-        originalFile: true,
-        size: `${(Math.random() * 4 + 1).toFixed(2)} MB`,
-        uploadedAt: new Date(fileDate).toLocaleDateString("id-ID", {
+  const fetchFiles = async () => {
+    if (!parentId) return;
+
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `${backendUrl}/api/nested/files/${parentId}`,
+        { withCredentials: true }
+      );
+
+
+      const rawFiles =
+        res.data?.item ||
+        res.data?.files ||
+        res.data?.data ||
+        [];
+
+      if (!Array.isArray(rawFiles)) {
+        console.error("Expected array, got:", res.data);
+        setFiles([]);
+        return;
+      }
+
+      const transformedFiles = rawFiles.map(file => ({
+        id: file._id,
+        fileId: file.fileId,
+        name: file.name,
+        date: file.tanggal_file
+          ? new Date(file.tanggal_file).toISOString().split("T")[0]
+          : "",
+        size: file.size
+          ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+          : "N/A",
+        uploadedAt: new Date(file.createdAt).toLocaleDateString("id-ID", {
           day: "2-digit",
           month: "short",
           year: "numeric",
         }),
-      },
-    ]);
+      }));
 
-    setFileName("");
-    setFileDate("");
-    setShowModal(false);
+      setFiles(transformedFiles);
+    } catch (err) {
+      console.error("Gagal fetch files:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchFiles();
+  }, [parentId]);
+
+
+  const saveFile = async () => {
+    if (!fileName || !newFile.file) {
+      toast.error("Nama file dan file wajib diisi");
+      return;
+    }
+
+    if (!isValid) {
+      toast.error("Format nama file tidak valid");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("name", fileName);
+      formData.append("file_nested", newFile.file);
+      formData.append("parentId", parentId);
+      formData.append("type", "file");
+      formData.append("tanggal_file", fileDate);
+
+      const { data } = await axios.post(
+        backendUrl + "/api/nested/create",
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success("File berhasil ditambahkan!");
+
+        await fetchFiles();
+
+        setFiles((prev) => [
+          ...prev,
+          {
+            id: data.fileId || crypto.randomUUID(),
+            name: fileName,
+            date: fileDate,
+            originalFile: true,
+            size: `${(Math.random() * 4 + 1).toFixed(2)} MB`,
+            uploadedAt: new Date(fileDate).toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            }),
+          },
+        ]);
+
+        setFileName("");
+        setFileDate("");
+        setNewFile({ name: "", file: null });
+        setShowModal(false);
+      } else {
+        toast.error(data.message || "Gagal menyimpan file");
+      }
+
+    } catch (err) {
+      console.error("Gagal upload file:", err);
+      console.error("Error response:", err.response?.data);
+      toast.error(err.response?.data?.message || "Gagal upload file");
+    }
   };
 
   const filteredFiles = files.filter(
@@ -71,6 +170,17 @@ export function ReviewTable({ onBack }) {
 
     const cleanedName = fileName.replace(/^\d{4}-\d{2}-\d{2}\s*/, "");
     setFileName(`${value} ${cleanedName}`.trim());
+  };
+
+  const handleOpenFile = async (fileId) => {
+    try {
+      window.open(
+        `${backendUrl}/api/nested/get-file/${fileId}`,
+        "_blank"
+      );
+    } catch (err) {
+      console.error("Gagal buka file laporan", err);
+    }
   };
 
   return (
@@ -148,7 +258,7 @@ export function ReviewTable({ onBack }) {
             </thead>
 
             <tbody className="divide-y divide-blue-50">
-              {filteredFiles.length === 0 && (
+              {!loading && filteredFiles.length === 0 && (
                 <tr>
                   <td colSpan={3} className="py-16 text-center">
                     <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center">
@@ -164,13 +274,13 @@ export function ReviewTable({ onBack }) {
                 </tr>
               )}
 
-              {filteredFiles.map((file) => (
+              {!loading && filteredFiles.map((file) => (
                 <tr key={file.id}>
                   {/* FILE */}
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-indigo-500 flex items-center justify-center shadow-sm">
-                        <DocumentTextIcon className="w-5 h-5 text-white" />
+                        <DocumentTextIcon className="w-5 h-5 text-white" onClick={() => handleOpenFile(file.fileId)} />
                       </div>
 
                       <div>
@@ -183,7 +293,7 @@ export function ReviewTable({ onBack }) {
 
                   {/* DATE */}
                   <td className="py-4 px-4 text-center text-gray-700">
-                    {file.uploadedAt}
+                    {file.date}
                   </td>
 
                   {/* SIZE */}
@@ -215,7 +325,6 @@ export function ReviewTable({ onBack }) {
               </Typography>
             </div>
 
-
             {/* FORMAT INFO */}
             <div className="mb-5 p-3 rounded-lg bg-blue-50 border border-blue-100">
               <Typography className="text-xs text-blue-700 font-mono text-center">
@@ -234,6 +343,7 @@ export function ReviewTable({ onBack }) {
                   const file = e.target.files?.[0];
                   if (!file) return;
 
+                  setNewFile({ ...newFile, file });
                   setFileName(file.name);
                 }}
                 className="w-full text-sm file:mr-3 file:py-2 file:px-4
@@ -280,8 +390,6 @@ export function ReviewTable({ onBack }) {
                 Nama file dibuat otomatis dari tanggal evidence.
                 Jika format tidak sesuai, file <b>tidak bisa disimpan</b>.
               </Typography>
-
-
             </div>
 
             {fileName && !isValid && (

@@ -50,7 +50,9 @@ export function StrukturFile() {
     const map = {};
     const roots = [];
 
-    flatData.forEach(item => {
+    const folders = flatData.filter(item => item.type === "folder");
+
+    folders.forEach(item => {
       let yearNumber = null;
       if (item.tanggal_folder) {
         const yearDate = new Date(item.tanggal_folder);
@@ -74,7 +76,7 @@ export function StrukturFile() {
       };
     });
 
-    flatData.forEach(item => {
+    folders.forEach(item => {
       if (item.parentId) {
         map[item.parentId]?.children.push(map[item._id]);
       } else {
@@ -91,8 +93,6 @@ export function StrukturFile() {
         const res = await axios.get(
           backendUrl + "/api/nested/all"
           , { withCredentials: true });
-
-        console.log("Raw data dari backend:", res.data.items);
 
         const items =
           res.data.items ||
@@ -488,6 +488,7 @@ export function StrukturFile() {
             <div className="bg-white rounded-2xl p-4 shadow-inner border animate-[fadeIn_0.3s_ease-in-out]">
               <ReviewTable
                 reviewId={activeReviewId}
+                parentId={activeReviewId}
                 onBack={() => setViewMode("tree")}
               />
             </div>
