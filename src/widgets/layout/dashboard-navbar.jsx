@@ -108,8 +108,20 @@ export function DashboardNavbar() {
                                     {userData.name?.[0]?.toUpperCase()}
                                 </div>
                             </MenuHandler>
-
+                             
                             <MenuList className="w-48">
+                                {!userData.isAccountVerified && 
+                                <MenuItem
+                                    onClick={() =>
+                                        navigate("/auth/verify-otp")
+                                    }
+                                    className="flex items-center gap-2"
+                                >
+                                    <UserCircleIcon className="h-4 w-4" />
+                                    Verifikasi Akun
+                                </MenuItem>
+                            }
+                            {userData.isAccountVerified &&
                                 <MenuItem
                                     onClick={() =>
                                         navigate("/auth/reset-password")
@@ -119,6 +131,7 @@ export function DashboardNavbar() {
                                     <UserCircleIcon className="h-4 w-4" />
                                     Reset Password
                                 </MenuItem>
+        }
 
                                 <hr className="my-1" />
 

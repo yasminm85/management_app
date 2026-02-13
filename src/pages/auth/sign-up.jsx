@@ -33,8 +33,9 @@ export function SignUp() {
       );
 
       if (data.success) {
-        setIsLoggedin(false);
+        setIsLoggedin(true);
         navigate('/auth/sign-in');
+        toast.success("Register berhasil");
       } else {
         toast.error(data.message);
       }
