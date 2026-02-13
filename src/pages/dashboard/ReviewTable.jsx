@@ -226,7 +226,7 @@ export function ReviewTable({ reviewId, parentId, onBack }) {
         </Typography>
 
         {/* Filter */}
-        <div className="flex gap-4 mb-5">
+        <div className="flex gap-4 mb-5 ">
           <Input
             label="Cari nama file"
             value={search}
@@ -245,7 +245,7 @@ export function ReviewTable({ reviewId, parentId, onBack }) {
           <table className="w-full text-sm">
             <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
               <tr>
-                <th className="text-left py-3 px-4 font-semibold text-blue-900">
+                <th className="text-left py-3 px-4 font-semibold text-blue-900 ">
                   Nama File
                 </th>
                 <th className="py-3 px-4 text-center font-semibold text-blue-900">
@@ -278,13 +278,32 @@ export function ReviewTable({ reviewId, parentId, onBack }) {
                 <tr key={file.id}>
                   {/* FILE */}
                   <td className="py-4 px-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-indigo-500 flex items-center justify-center shadow-sm">
-                        <DocumentTextIcon className="w-5 h-5 text-white" onClick={() => handleOpenFile(file.fileId)} />
+                    <div className="flex items-center gap-3 group">
+                      <div
+                        onClick={() => handleOpenFile(file.fileId)}
+                        className="
+        h-10 w-10
+        rounded-xl
+        bg-gradient-to-br from-green-500 to-indigo-500
+        flex items-center justify-center
+        shadow-sm
+        cursor-pointer
+        transition-all duration-200
+        group-hover:scale-105
+        group-hover:shadow-md
+      "
+                      >
+                        <DocumentTextIcon
+                          className="
+          w-5 h-5 text-white
+          transition-colors
+          group-hover:text-yellow-200
+        "
+                        />
                       </div>
 
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-gray-900 ">
                           {file.name}
                         </div>
                       </div>
@@ -383,7 +402,7 @@ export function ReviewTable({ reviewId, parentId, onBack }) {
                 label="Nama File (Auto)"
                 value={fileName}
                 readOnly
-                className="bg-gray-100 cursor-not-allowed"
+                className="bg-gray-100 cursor-not-allowed "
                 error={fileName && !isValid}
               />
               <Typography className="text-[11px] text-gray-500 mt-1">

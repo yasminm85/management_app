@@ -125,9 +125,12 @@ export function SignIn() {
                 </div>
 
                 <div className="text-right">
-                  <Typography variant="small" className="text-gray-700">
-                    Forgot Password?
-                  </Typography>
+                  <Link to="/auth/reset-password" className="ml-1 font-medium text-gray-900 ">
+                    <Typography variant="small" className="text-white-gray-700 ">
+                      Forgot Password?
+                    </Typography>
+                  </Link>
+
                 </div>
 
                 <Button type="submit" fullWidth className="bg-blue-600 hover:bg-blue-700 shadow-md">
@@ -147,7 +150,7 @@ export function SignIn() {
 
           {/* === SPACER KANAN (BIAR TOWER KELIATAN) === */}
           <div className="login-spacer" />
-          
+
 
         </div>
       </div>
