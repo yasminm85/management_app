@@ -133,14 +133,12 @@ export function Home() {
   return (
     <div className="mt-12 space-y-10">
 
-      {/* ================= HEADER ================= */}
       <div>
         <Typography variant="h2" className="font-bold text-gray-800">
           Dashboard Audit SPI Files
         </Typography>
       </div>
 
-      {/* ================= STAT CARDS ================= */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
         {statisticsCards.map(({ icon, title, footer, value, onClick }) => (
           <div
@@ -166,7 +164,6 @@ export function Home() {
       </div>
 
 
-      {/* ================= INSIGHT BAR ================= */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100">
         <CardBody className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -181,7 +178,6 @@ export function Home() {
         </CardBody>
       </Card>
 
-      {/* ================= DISTRIBUSI AUDIT ================= */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
         <Card className="border border-gray-200">
@@ -210,7 +206,6 @@ export function Home() {
           </CardBody>
         </Card>
 
-        {/* ================= ACTIVITY ================= */}
         <Card className="xl:col-span-2 border border-gray-200">
           <CardHeader
             floated={false}
@@ -253,7 +248,6 @@ export function Home() {
         </Card>
       </div>
 
-      {/* ================= QUICK ACTION ================= */}
       <Card className="border border-gray-200 bg-gray-50">
         <CardBody className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-3">
