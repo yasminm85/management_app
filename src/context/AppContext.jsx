@@ -35,14 +35,23 @@ export const AppContextProvider = (props) => {
 
     const getUserData = async () => {
         try {
-            const { data } = await axios.get(backendUrl + '/api/user/data', { withCredentials: true })
-            data.success ? setUserData(data.userData) : toast.error(data.message)
+            const { data } = await axios.get(
+                backendUrl + "/api/user/data",
+                { withCredentials: true }
+            );
+
+            if (data.success) {
+                setUserData(data.userData);
+            } else {
+                setUserData(null);
+            }
         } catch (error) {
-            toast.error(error.message)
+            setUserData(null); 
         } finally {
-            setLoading(false);
+            setLoading(false); 
         }
-    }
+    };
+
 
     useEffect(() => {
         getAuthState();
