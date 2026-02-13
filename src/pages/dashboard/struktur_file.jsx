@@ -19,7 +19,7 @@ import axios from "axios";
 
 export function StrukturFile() {
   const [treeData, setTreeData] = useState([]);
-  const { backendUrl, isLoggedin } = useContext(AppContent);
+  const { backendUrl, isLoggedin, userData } = useContext(AppContent);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -464,6 +464,7 @@ export function StrukturFile() {
               <div className="w-px h-6 bg-gray-300 mx-1" />
 
               {/* ➕ Tambah Folder */}
+              {!userData?.isAccountVerified === false && 
               <IconButton
                 variant="gradient"
                 size="sm"
@@ -472,10 +473,12 @@ export function StrukturFile() {
               >
                 <PlusIcon className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-90 group-hover:scale-110" />
               </IconButton>
+}
             </div>
           </div>
 
           {/* Tree View */}
+          
           {viewMode === "tree" && (
             <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner max-h-[65vh] overflow-y-auto">
               {treeData.map((node) => (
@@ -484,7 +487,7 @@ export function StrukturFile() {
             </div>
           )}
 
-          {viewMode === "review" && (
+          {viewMode === "review" && !userData?.isAccountVerified === false && (
             <div className="bg-white rounded-2xl p-4 shadow-inner border animate-[fadeIn_0.3s_ease-in-out]">
               <ReviewTable
                 reviewId={activeReviewId}

@@ -28,19 +28,16 @@ export function VerifyToken() {
         newOtp[index] = element.value;
         setOtp(newOtp);
 
-        // Auto focus ke input selanjutnya
         if (element.value !== "" && index < 5) {
             inputRefs.current[index + 1].focus();
         }
 
-        // Auto submit kalau sudah 6 digit
         if (newOtp.every(digit => digit !== "") && index === 5) {
             verifyOtp(newOtp.join(""));
         }
     };
 
     const handleKeyDown = (e, index) => {
-        // Handle backspace
         if (e.key === "Backspace") {
             if (otp[index] === "" && index > 0) {
                 inputRefs.current[index - 1].focus();
@@ -62,11 +59,9 @@ export function VerifyToken() {
         });
         setOtp(newOtp);
 
-        // Focus ke input terakhir yang terisi
         const lastFilledIndex = Math.min(pastedData.length - 1, 5);
         inputRefs.current[lastFilledIndex].focus();
 
-        // Auto submit kalau paste 6 digit
         if (pastedData.length === 6) {
             verifyOtp(pastedData);
         }

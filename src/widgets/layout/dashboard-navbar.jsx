@@ -54,6 +54,18 @@ export function DashboardNavbar() {
         }
     };
 
+    const sendResetOtp = async () => {
+        try {
+            axios.defaults.withCredentials = true;
+            const { data } = await axios.post(
+                backendUrl + "/api/auth/send-verify-otp");
+            navigate("/auth/verify-otp");
+            toast.success("Kode OTP telah dikirim ke email Anda");
+        } catch (err) {
+            toast.error("Gagal mengirim ulang kode OTP");
+        }
+    };
+
     return (
         <Navbar
             color={fixedNavbar ? "white" : "transparent"}
@@ -112,8 +124,7 @@ export function DashboardNavbar() {
                             <MenuList className="w-48">
                                 {!userData.isAccountVerified && 
                                 <MenuItem
-                                    onClick={() =>
-                                        navigate("/auth/verify-otp")
+                                    onClick={sendResetOtp
                                     }
                                     className="flex items-center gap-2"
                                 >
