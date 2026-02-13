@@ -33,7 +33,7 @@ export function SignUp() {
       );
 
       if (data.success) {
-        setIsLoggedin(true);
+        setIsLoggedin(false);
         navigate('/auth/sign-in');
       } else {
         toast.error(data.message);
