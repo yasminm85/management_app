@@ -11,6 +11,7 @@ import {
     MenuItem,
 } from "@material-tailwind/react";
 import {
+    KeyIcon,
     UserCircleIcon,
     Bars3Icon,
 } from "@heroicons/react/24/solid";
@@ -139,7 +140,7 @@ export function DashboardNavbar() {
                                     }
                                     className="flex items-center gap-2"
                                 >
-                                    <UserCircleIcon className="h-4 w-4" />
+                                    <KeyIcon className="h-4 w-4" />
                                     Reset Password
                                 </MenuItem>
         }

@@ -136,10 +136,7 @@ export function Home() {
       {/* ================= HEADER ================= */}
       <div>
         <Typography variant="h2" className="font-bold text-gray-800">
-          Audit Control Center
-        </Typography>
-        <Typography className="text-sm text-gray-500">
-          Ringkasan cepat kondisi audit saat ini
+          Dashboard Audit SPI Files
         </Typography>
       </div>
 
