@@ -59,12 +59,20 @@ export function Home() {
     }
   };
 
-  const statisticsCards = data.map((item) => ({
+  const gradients = [
+    "from-blue-500 to-indigo-600",
+    "from-emerald-500 to-teal-600",
+    "from-purple-500 to-pink-600",
+    "from-orange-500 to-red-500",
+  ];
+
+
+  const statisticsCards = data.map((item, index) => ({
     id: item.parentId,
     title: item.Name,
     value: item.folderCount,
     icon: FolderIcon,
-
+    gradient: gradients[index % gradients.length],
     footer: {
       value: "Folder",
       label: "aktif",
@@ -84,9 +92,11 @@ export function Home() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCards.map(({ id, icon, title, footer, value, onClick }) => (
+        {statisticsCards.map(({ id, icon, title, footer, value, onClick, gradient }) => (
           <div
             key={id}
+            onClick={onClick}
+            
           >
             <StatisticsCard
               title={title}
@@ -94,15 +104,16 @@ export function Home() {
               icon={React.createElement(icon, {
                 className: "w-6 h-6 text-white",
               })}
+              className={`bg-gradient-to-br ${gradient} text-white`} 
               footer={
-                <Typography className="text-sm text-blue-gray-600">
-                  <strong className={footer.color}>{footer.value}</strong>
-                  &nbsp;{footer.label}
+                <Typography className="text-sm text-white/80">
+                  <strong>{footer.value}</strong> {footer.label}
                 </Typography>
               }
             />
           </div>
         ))}
+
       </div>
 
 
