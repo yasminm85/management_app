@@ -1,0 +1,97 @@
+.signup-page {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+/* BACKGROUND */
+.signup-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/img/sign-up.png");
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+/* OVERLAY */
+.signup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 1;
+}
+
+/* CONTENT */
+.signup-content {
+  position: relative;
+  z-index: 5;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  overflow-y: auto;
+}
+
+/* GRID */
+.signup-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .signup-grid {
+    grid-template-columns: 3fr 2fr;
+  }
+}
+
+/* FORM */
+.signup-form-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* GLASS CARD */
+.signup-glass {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 42px;
+  border-radius: 24px;
+  z-index: 5;
+  
+  /* Glassmorphism */
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+/* INPUT */
+.signup-input {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  color: #111827;
+}
+
+/* SPACER */
+.signup-spacer {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .signup-spacer {
+    display: block;
+  }
+}
+
