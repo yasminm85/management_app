@@ -34,7 +34,7 @@ export function SignIn() {
       if (data.success) {
         setIsLoggedin(true);
         getUserData();
-        navigate("/home");
+        navigate("/dashboard/home");
       } else {
         toast.error(data.message);
       }
