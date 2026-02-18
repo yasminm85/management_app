@@ -6,7 +6,7 @@ export const createNestedItem = async (req, res) => {
 
     try {
 
-        const { name, type, parentId, isStatic, mimetype, filename, size, tanggal_folder, tanggal_file } = req.body;
+        const { name, type, parentId, isStatic, tanggal_folder, tanggal_file } = req.body;
 
         let fileNestedId = null;
 
@@ -36,9 +36,9 @@ export const createNestedItem = async (req, res) => {
             fileId: fileNestedId || null,
             tanggal_folder: tanggal_folder || null,
             tanggal_file: tanggal_file || null,
-            mimetype: req.file.mimetype || null,
-            filename: req.file.originalname || null,
-            size: req.file.size || null
+            mimetype: req.file?.mimetype || null,
+            filename: req.file?.originalname || null,
+            size: req.file?.size || null
         });
 
 
