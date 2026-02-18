@@ -53,23 +53,12 @@ export function StrukturFile() {
     const folders = flatData.filter(item => item.type === "folder");
 
     folders.forEach(item => {
-      let yearNumber = null;
-      if (item.tanggal_folder) {
-        const yearDate = new Date(item.tanggal_folder);
-        yearNumber = yearDate.getUTCFullYear();
-
-        console.log('Parse year:', {
-          raw: item.tanggal_folder,
-          parsed: yearDate,
-          year: yearNumber
-        });
-      }
 
       map[item._id] = {
         id: item._id,
         name: item.name,
         type: "folder",
-        year: yearNumber,
+        year: item.tanggal_folder ?? null,
         color: item.color || "gray",
         icon: FolderIcon,
         children: [],
@@ -201,17 +190,13 @@ export function StrukturFile() {
     }
 
     try {
-      const yearDate = newFolder.year
-        ? new Date(newFolder.year, 0, 1)
-        : null;
-
       await axios.post(
         backendUrl + "/api/nested/create",
         {
           name: newFolder.name,
           parentId: newFolder.parentId,
           type: "folder",
-          tanggal_folder: yearDate,
+          tanggal_folder: newFolder.year,
         },
         {
           withCredentials: true,
@@ -370,12 +355,6 @@ export function StrukturFile() {
                   selectedYear &&
                   node.id === activeYearNode
                 ) {
-                  console.log('Filtering:', {
-                    childName: child.name,
-                    childYear: child.year,
-                    selectedYear: selectedYear,
-                    match: child.year === selectedYear
-                  });
 
                   return child.year === selectedYear;
                 }
