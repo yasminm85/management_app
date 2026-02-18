@@ -59,20 +59,12 @@ export function Home() {
     }
   };
 
-  const gradients = [
-    "from-blue-500 to-indigo-600",
-    "from-emerald-500 to-teal-600",
-    "from-purple-500 to-pink-600",
-    "from-orange-500 to-red-500",
-  ];
-
 
   const statisticsCards = data.map((item, index) => ({
     id: item.parentId,
     title: item.Name,
     value: item.folderCount,
     icon: FolderIcon,
-    gradient: gradients[index % gradients.length],
     footer: {
       value: "Folder",
       label: "aktif",
