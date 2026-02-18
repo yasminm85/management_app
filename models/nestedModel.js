@@ -27,7 +27,7 @@ const nestedSchema = new mongoose.Schema({
         default: null,
     },
     tanggal_folder: {
-        type: Date,
+        type: Number,
         default: null,
     },
     tanggal_file: {
