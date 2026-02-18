@@ -26,6 +26,7 @@ export function StrukturFile() {
     y: 0,
     node: null,
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [expanded, setExpanded] = useState({});
   const [showYearModal, setShowYearModal] = useState(false);
@@ -259,6 +260,30 @@ export function StrukturFile() {
     }
   };
 
+  const filterTreeBySearch = (nodes, term) => {
+    if (!term) return nodes;
+
+    return nodes
+      .map(node => {
+        const match =
+          node.name.toLowerCase().includes(term.toLowerCase());
+
+        const filteredChildren = node.children
+          ? filterTreeBySearch(node.children, term)
+          : [];
+
+        if (match || filteredChildren.length > 0) {
+          return {
+            ...node,
+            children: filteredChildren,
+          };
+        }
+
+        return null;
+      })
+      .filter(Boolean);
+  };
+
   const TreeNode = ({ node, level = 0 }) => {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = expanded[node.id];
@@ -266,7 +291,9 @@ export function StrukturFile() {
     const isActive = activeReviewId === node.id;
 
     return (
+
       <div className="select-none">
+
         {/* Node Item */}
         <div
           onContextMenu={(e) => openContextMenu(e, node)}
@@ -293,6 +320,7 @@ export function StrukturFile() {
             }
           }}
         >
+
           {/* Expand/Collapse Icon */}
           {hasChildren ? (
             <div className="flex-shrink-0">
@@ -419,6 +447,18 @@ export function StrukturFile() {
 
             {/* ACTION BUTTONS */}
             <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Cari folder..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="
+    px-3 py-2 text-sm rounded-xl border
+    focus:outline-none focus:ring-2 focus:ring-blue-400
+    transition w-48
+  "
+              />
+
               {/* Expand */}
               <IconButton
                 variant="outlined"
@@ -443,26 +483,27 @@ export function StrukturFile() {
               <div className="w-px h-6 bg-gray-300 mx-1" />
 
               {/* ➕ Tambah Folder */}
-              {!userData?.isAccountVerified === false && 
-              <IconButton
-                variant="gradient"
-                size="sm"
-                onClick={() => setShowAddFolderModal(true)}
-                className="group from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-md"
-              >
-                <PlusIcon className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-90 group-hover:scale-110" />
-              </IconButton>
-}
+              {!userData?.isAccountVerified === false &&
+                <IconButton
+                  variant="gradient"
+                  size="sm"
+                  onClick={() => setShowAddFolderModal(true)}
+                  className="group from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-md"
+                >
+                  <PlusIcon className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-90 group-hover:scale-110" />
+                </IconButton>
+              }
             </div>
           </div>
 
           {/* Tree View */}
-          
+
           {viewMode === "tree" && (
             <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner max-h-[65vh] overflow-y-auto">
-              {treeData.map((node) => (
-                <TreeNode key={node.id} node={node} />
-              ))}
+             {filterTreeBySearch(treeData, searchTerm).map((node) => (
+  <TreeNode key={node.id} node={node} />
+))}
+
             </div>
           )}
 

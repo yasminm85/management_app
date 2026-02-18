@@ -84,7 +84,7 @@ export function DashboardNavbar() {
                         className={`bg-transparent p-0 ${fixedNavbar ? "mt-1" : ""
                             }`}
                     >
-                        <Link to={`/${layout}`}>
+                        <Link to={`/dashboard/home`}>
                             <Typography
                                 variant="small"
                                 color="blue-gray"

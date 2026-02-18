@@ -379,7 +379,7 @@ export function ReviewTable({ reviewId, parentId, onBack }) {
             {/* TANGGAL */}
             <div className="mb-4">
               <Typography className="text-xs font-medium text-gray-700 mb-1">
-                Tanggal File
+                Tanggal Terbit Dokumen
               </Typography>
               <input
                 type="date"
@@ -406,7 +406,7 @@ export function ReviewTable({ reviewId, parentId, onBack }) {
                 error={fileName && !isValid}
               />
               <Typography className="text-[11px] text-gray-500 mt-1">
-                Nama file dibuat otomatis dari tanggal evidence.
+                Nama file dibuat otomatis dari tanggal terbit dokumen.
                 Jika format tidak sesuai, file <b>tidak bisa disimpan</b>.
               </Typography>
             </div>
