@@ -21,100 +21,26 @@ import { useNavigate } from "react-router-dom";
 export function Home() {
   const { backendUrl, userData, setUserData, setIsLoggedin } = useContext(AppContent);
   const [treeItems, setTreeItems] = useState([]);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchActivity = async () => {
-  //     try {
-  //       const res = await axios.get(
-  //         backendUrl + "/api/activity?limit=5",
-  //         { withCredentials: true }
-  //       );
-  //       setActivities(res.data.items || []);
-  //     } catch (err) {
-  //       console.error("Gagal ambil activity", err);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          backendUrl + "/api/nested/folder-total",
+          { withCredentials: true }
+        );
+        setData(res.data.folderCount || []);
+      } catch (err) {
+        console.error("Gagal ambil activity", err);
+      }
+    };
 
-  //   fetchActivity();
-  // }, [backendUrl]);
+    fetchData();
+  }, [backendUrl]);
 
-  const countFolderByNames = (names) => {
-    return treeItems.filter(
-      (item) =>
-        item.type === "folder" &&
-        names.some((name) =>
-          item.name.toLowerCase().includes(name.toLowerCase())
-        )
-    ).length;
-  };
-
-  const auditCount = countFolderByNames([
-    "operasional",
-    "tematik",
-    "investigasi",
-  ]);
-
-  const reviewCount = countFolderByNames([
-    "review",
-    "evaluasi",
-  ]);
-
-  const konsultasiCount = countFolderByNames([
-    "konsultasi",
-  ]);
-
-  const supportingCount = treeItems.filter(
-    (item) => item.type === "file"
-  ).length;
-
-  const statisticsCards = [
-    {
-      title: "Audit",
-      value: auditCount,
-      icon: FolderIcon,
-      onClick: () => navigate("/file-explorer?category=audit"),
-      footer: {
-        value: "Folder",
-        label: "audit aktif",
-        color: "text-blue-500",
-      },
-    },
-    {
-      title: "Review / Evaluasi",
-      value: reviewCount,
-      icon: CheckCircleIcon,
-      onClick: () => navigate("/file-explorer?category=review"),
-      footer: {
-        value: "Folder",
-        label: "review",
-        color: "text-green-500",
-      },
-    },
-    {
-      title: "Konsultasi",
-      value: konsultasiCount,
-      icon: ClockIcon,
-      onClick: () => navigate("/file-explorer?category=konsultasi"),
-      footer: {
-        value: "Folder",
-        label: "konsultasi",
-        color: "text-orange-500",
-      },
-    },
-    {
-      title: "Supporting",
-      value: supportingCount,
-      icon: ExclamationTriangleIcon,
-      onClick: () => navigate("/file-explorer?category=supporting"),
-      footer: {
-        value: "Dokumen",
-        label: "pendukung",
-        color: "text-red-500",
-      },
-    },
-  ];
 
   const activityIcon = (action) => {
     switch (action) {
@@ -128,6 +54,20 @@ export function Home() {
         return <ExclamationTriangleIcon className="w-6 h-6 text-gray-400" />;
     }
   };
+
+  const statisticsCards = data.map((item) => ({
+  title: item.Name,
+  value: item.folderCount,
+  icon: FolderIcon,
+  onClick: () =>
+    navigate(`/file-explorer?parentId=${item.parentId}`),
+  footer: {
+    value: "Folder",
+    label: "aktif",
+    color: "text-blue-500",
+  },
+}));
+
 
 
   return (
