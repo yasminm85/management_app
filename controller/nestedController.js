@@ -113,3 +113,53 @@ export const getFile = async (req, res) => {
         res.status(500).send('Error retrieving file');
     }
 };
+
+export const FolderTotal = async (req, res) => {
+    try {
+        const [folderCount] = await Promise.all([
+            Nested.aggregate([
+                {
+                    $match: {
+                        parentId: {
+                            $in: [
+                                new mongoose.Types.ObjectId("6989547fa7f77cef4554db55"),
+                                new mongoose.Types.ObjectId("698956c3a7f77cef4554db5d"),
+                                new mongoose.Types.ObjectId("698956faa7f77cef4554db5f"),
+                                new mongoose.Types.ObjectId("698958a7a7f77cef4554db6b")
+                            ]
+                        }
+                    },
+                },
+
+                {
+                    $group: {
+                        _id: '$parentId',
+                        folderCount: { $sum: 1 },
+                    }
+                },
+
+                {
+                    $lookup: {
+                        from: "nesteds",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "parent"
+                    }
+                },
+
+                {
+                    $project: {
+                        _id: 0,
+                        parentId: "$_id",
+                        Name: { $arrayElemAt: ["$parent.name", 0] },
+                        folderCount: 1
+                    }
+                }
+            ]),
+        ]);
+
+        res.status(200).json({ success: true, folderCount: folderCount });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
