@@ -22,13 +22,14 @@ export function Home() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          backendUrl + "/api/nested/folder-total",
+          backendUrl + "/api/nested/total",
           { withCredentials: true }
         );
 
-        const sortedData = (res.data.folderCount || [])
-          .sort((a, b) => a.Name.localeCompare(b.Name));
+        const sortedData = (res.data.fileCount || [])
+          .sort((a, b) => a.parentName.localeCompare(b.parentName));
 
+        console.log("Data yang diterima:", sortedData);
         setData(sortedData);
       } catch (err) {
         console.error("Gagal ambil activity", err);
@@ -42,8 +43,8 @@ export function Home() {
 
   const statisticsCards = data.map((item, index) => ({
     id: item.parentId,
-    title: item.Name,
-    value: item.folderCount,
+    title: item.parentName,
+    value: item.totalFolders,
     icon: FolderIcon,
     footer: {
       value: "Folder",
