@@ -29,11 +29,13 @@ export function StrukturFile() {
     node: null,
   });
   const [searchTerm, setSearchTerm] = useState("");
-
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [startYear, setStartYear] = useState(currentYear - 1);
+  const [activeYearNode, setActiveYearNode] = useState(null);
   const [expanded, setExpanded] = useState({});
   const [showYearModal, setShowYearModal] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(null);
-  const [activeYearNode, setActiveYearNode] = useState(null);
   const [viewMode, setViewMode] = useState("tree");
   const [activeReviewId, setActiveReviewId] = useState(null);
   const [showAddFolderModal, setShowAddFolderModal] = useState(false);
@@ -165,6 +167,15 @@ export function StrukturFile() {
       }, 10);
     }
   };
+
+ const handlePrev = () => {
+  setStartYear((prev) => prev - 1);
+};
+
+const handleNext = () => {
+  setStartYear((prev) => prev + 1);
+};
+
 
   const openContextMenu = (e, node) => {
     e.preventDefault();
@@ -579,24 +590,51 @@ export function StrukturFile() {
             </div>
           )}
 
-          {/* Year Modal */}
           {showYearModal && (
             <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-              <div className="bg-white rounded-2xl p-6 w-80 shadow-xl">
+              <div className="bg-white rounded-2xl p-6 w-96 shadow-xl">
                 <Typography variant="h6" className="mb-4 text-center font-semibold">
                   📅 Pilih Tahun
                 </Typography>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {[2022, 2023, 2024, 2025].map((year) => (
-                    <button
-                      key={year}
-                      onClick={() => handleSelectYear(year)}
-                      className="px-4 py-2 rounded-xl border hover:bg-blue-50 hover:border-blue-400 transition font-medium"
-                    >
-                      {year}
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between gap-3">
+                  {/* KIRI */}
+                  <button
+                    onClick={handlePrev}
+                    className="w-10 h-10 rounded-full border flex items-center justify-center
+                     hover:bg-gray-100 transition"
+                  >
+                    ◀
+                  </button>
+
+                  {/* 4 TAHUN */}
+                  <div className="grid grid-cols-4 gap-2 flex-1">
+                    {[0, 1, 2, 3].map((i) => {
+                      const year = startYear + i;
+                      return (
+                        <button
+                          key={year}
+                          onClick={() => {
+                            handleSelectYear(year);
+                            setShowYearModal(false);
+                          }}
+                          className="py-2 rounded-xl border font-medium
+                           hover:bg-blue-50 hover:border-blue-400 transition"
+                        >
+                          {year}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* KANAN */}
+                  <button
+                    onClick={handleNext}
+                    className="w-10 h-10 rounded-full border flex items-center justify-center
+                     hover:bg-gray-100 transition"
+                  >
+                    ▶
+                  </button>
                 </div>
 
                 <button
@@ -609,18 +647,16 @@ export function StrukturFile() {
             </div>
           )}
 
-          {/* Add Folder Modal */}
+
+
           {showAddFolderModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center">
-              {/* Overlay */}
               <div
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                 onClick={() => setShowAddFolderModal(false)}
               />
 
-              {/* Modal */}
               <div className="relative bg-white rounded-3xl w-[420px] shadow-2xl border border-gray-200 animate-[fadeIn_0.25s_ease-out]">
-                {/* Header */}
                 <div className="flex items-center gap-3 px-6 py-4 border-b">
                   <div className="p-2 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 shadow">
                     <FolderIcon className="w-5 h-5 text-white" />
@@ -635,9 +671,7 @@ export function StrukturFile() {
                   </div>
                 </div>
 
-                {/* Body */}
                 <div className="px-6 py-5 space-y-4">
-                  {/* Nama Folder */}
                   <div>
                     <Typography className="text-xs font-medium text-gray-600 mb-1">
                       Nama Folder
@@ -653,47 +687,32 @@ export function StrukturFile() {
                     />
                   </div>
 
-                  {/* Parent Folder */}
-                  <div>
-                    <Typography className="text-xs font-medium text-gray-600 mb-1">
-                      Simpan di Folder
-                    </Typography>
-                    <select
-                      value={newFolder.parentId}
-                      onChange={(e) =>
-                        setNewFolder({ ...newFolder, parentId: e.target.value })
-                      }
-                      className="w-full px-4 py-2.5 rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
-                    >
-                      <option value="">Pilih folder tujuan</option>
-                      {getFolderOptions(treeData).map((opt) => (
-                        <option key={opt.id} value={opt.id}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Tahun */}
                   <div>
                     <Typography className="text-xs font-medium text-gray-600 mb-1">
                       Tahun (Opsional)
                     </Typography>
+
                     <select
                       value={newFolder.year || ""}
                       onChange={(e) =>
-                        setNewFolder({ ...newFolder, year: e.target.value ? Number(e.target.value) : null })
+                        setNewFolder({
+                          ...newFolder,
+                          year: e.target.value ? Number(e.target.value) : null,
+                        })
                       }
-                      className="w-full px-4 py-2.5 rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+                      className="w-full px-4 py-2.5 rounded-xl border bg-white
+               focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
                     >
                       <option value="">Semua Tahun</option>
-                      {[2022, 2023, 2024, 2025].map((year) => (
+
+                      {years.map((year) => (
                         <option key={year} value={year}>
                           {year}
                         </option>
                       ))}
                     </select>
                   </div>
+
                 </div>
 
                 {/* Footer */}
