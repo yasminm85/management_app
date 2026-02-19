@@ -1,10 +1,8 @@
 import {
-  Card,
   CardBody,
   Input,
   Typography,
   Button,
-  Chip,
 } from "@material-tailwind/react";
 import { useState, useContext, useEffect } from "react";
 import {
@@ -185,7 +183,7 @@ export function ReviewTable({ parentId, onBack }) {
 
   return (
     <>
-      <CardBody>
+      <CardBody className="h-full flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <button
@@ -240,7 +238,7 @@ export function ReviewTable({ parentId, onBack }) {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm">
+        <div className="flex-1 overflow-y-auto rounded-xl border border-blue-100 bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
               <tr>

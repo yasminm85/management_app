@@ -424,7 +424,7 @@ export function StrukturFile() {
           />
         )}
 
-        <CardBody className="bg-gradient-to-br from-blue-50 via-white to-purple-50 shadow-xl border border-gray-200">
+        <CardBody className="bg-gradient-to-br from-blue-50 shadow-xl border border-gray-200 h-[80vh] flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
             <div className="flex items-center gap-3">
@@ -452,11 +452,10 @@ export function StrukturFile() {
                 placeholder="Cari folder..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="
-    px-3 py-2 text-sm rounded-xl border
-    focus:outline-none focus:ring-2 focus:ring-blue-400
-    transition w-48
-  "
+                className=" px-3 py-2 text-sm rounded-xl border
+                  focus:outline-none focus:ring-2 focus:ring-blue-400
+                  transition w-48
+                  "
               />
 
               {/* Expand */}
@@ -499,16 +498,16 @@ export function StrukturFile() {
           {/* Tree View */}
 
           {viewMode === "tree" && (
-            <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner max-h-[65vh] overflow-y-auto">
-             {filterTreeBySearch(treeData, searchTerm).map((node) => (
-  <TreeNode key={node.id} node={node} />
-))}
+            <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner] overflow-y-auto">
+              {filterTreeBySearch(treeData, searchTerm).map((node) => (
+                <TreeNode key={node.id} node={node} />
+              ))}
 
             </div>
           )}
 
           {viewMode === "review" && !userData?.isAccountVerified === false && (
-            <div className="bg-white rounded-2xl p-4 shadow-inner border animate-[fadeIn_0.3s_ease-in-out]">
+            <div className=" bg-white rounded-2xl p-4 shadow-inner border h-[65vh] flex flex-col animate-[fadeIn_0.3s_ease-in-out]">
               <ReviewTable
                 reviewId={activeReviewId}
                 parentId={activeReviewId}

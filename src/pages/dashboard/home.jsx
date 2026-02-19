@@ -4,19 +4,15 @@ import {
 } from "@material-tailwind/react";
 import {
   FolderIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import { StatisticsCard } from "@/widgets/cards";
 import { AppContent } from "@/context/AppContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 export function Home() {
-  const { backendUrl} = useContext(AppContent);
+  const { backendUrl } = useContext(AppContent);
   const [data, setData] = useState([]);
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +25,6 @@ export function Home() {
         const sortedData = (res.data.fileCount || [])
           .sort((a, b) => a.parentName.localeCompare(b.parentName));
 
-        console.log("Data yang diterima:", sortedData);
         setData(sortedData);
       } catch (err) {
         console.error("Gagal ambil activity", err);
@@ -40,11 +35,11 @@ export function Home() {
   }, [backendUrl]);
 
 
-
   const statisticsCards = data.map((item, index) => ({
     id: item.parentId,
     title: item.parentName,
     value: item.totalFolders,
+    totalFiles: item.totalFiles,
     icon: FolderIcon,
     footer: {
       value: "Folder",
@@ -65,11 +60,9 @@ export function Home() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCards.map(({ id, icon, title, footer, value, onClick, gradient }) => (
+        {statisticsCards.map(({ id, icon, title, value, totalFiles }) => (
           <div
             key={id}
-            onClick={onClick}
-            
           >
             <StatisticsCard
               title={title}
@@ -77,11 +70,16 @@ export function Home() {
               icon={React.createElement(icon, {
                 className: "w-6 h-6 text-white",
               })}
-              className={`bg-gradient-to-br ${gradient} text-white`} 
               footer={
-                <Typography className="text-sm text-white/80">
-                  <strong>{footer.value}</strong> {footer.label}
-                </Typography>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-sm text-gray-600">
+                    Total File
+                  </span>
+                  <span className="rounded-full bg-blue-100 px-3 py-0.5 text-sm font-bold text-blue-700">
+                    {totalFiles}
+                  </span>
+                </div>
+
               }
             />
           </div>
