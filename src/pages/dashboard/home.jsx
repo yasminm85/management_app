@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
   Typography,
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Progress,
 } from "@material-tailwind/react";
 import {
   FolderIcon,
@@ -19,11 +14,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export function Home() {
-  const { backendUrl, userData, setUserData, setIsLoggedin } = useContext(AppContent);
-  const [treeItems, setTreeItems] = useState([]);
+  const { backendUrl} = useContext(AppContent);
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
-  const [activities, setActivities] = useState([]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,19 +38,6 @@ export function Home() {
     fetchData();
   }, [backendUrl]);
 
-
-  const activityIcon = (action) => {
-    switch (action) {
-      case "CREATE_FOLDER":
-        return <FolderIcon className="w-6 h-6 text-blue-500" />;
-      case "UPLOAD_EVIDENCE":
-        return <CheckCircleIcon className="w-6 h-6 text-green-500" />;
-      case "START_REVIEW":
-        return <ClockIcon className="w-6 h-6 text-orange-500" />;
-      default:
-        return <ExclamationTriangleIcon className="w-6 h-6 text-gray-400" />;
-    }
-  };
 
 
   const statisticsCards = data.map((item, index) => ({

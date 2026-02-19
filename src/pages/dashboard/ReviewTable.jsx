@@ -16,7 +16,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "@/context/AppContext";
 
-export function ReviewTable({ reviewId, parentId, onBack }) {
+export function ReviewTable({ parentId, onBack }) {
   const { backendUrl } = useContext(AppContent);
   const [search, setSearch] = useState("");
   const [date, setDate] = useState("");
@@ -206,7 +206,6 @@ export function ReviewTable({ reviewId, parentId, onBack }) {
             </span>
           </button>
 
-          {/* Add Evidence */}
           <Button
             size="sm"
             color="blue"
