@@ -11,11 +11,12 @@ import {
   ChevronDownIcon,
   FolderIcon,
   PlusIcon,
+  PencilIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { ReviewTable } from '../dashboard/ReviewTable'
 import { AppContent } from "@/context/AppContext";
 import axios from "axios";
-import { toast } from "react-toastify";
 
 
 export function StrukturFile() {
@@ -42,6 +43,14 @@ export function StrukturFile() {
     year: null,
     color: "blue",
   });
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [renameFolder, setRenameFolder] = useState({
+    id: "",
+    name: "",
+  });
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteFolder, setDeleteFolder] = useState(null);
 
   const buildTree = (flatData) => {
     if (!Array.isArray(flatData)) {
@@ -78,7 +87,8 @@ export function StrukturFile() {
     return roots;
   };
 
-  const fetchTree = async () => {
+  useEffect(() => {
+    const fetchTree = async () => {
       try {
         const res = await axios.get(
           backendUrl + "/api/nested/all"
@@ -99,7 +109,6 @@ export function StrukturFile() {
       }
     };
 
-  useEffect(() => {
     if (isLoggedin) {
       fetchTree();
     }
@@ -192,7 +201,7 @@ export function StrukturFile() {
     }
 
     try {
-      const {data} = await axios.post(
+      await axios.post(
         backendUrl + "/api/nested/create",
         {
           name: newFolder.name,
@@ -204,15 +213,6 @@ export function StrukturFile() {
           withCredentials: true,
         }
       );
-
-      if (data.success) {
-        toast.success("Folder berhasil dibuat");
-      } else {
-        toast.error(data.message || "Gagal simpan folder");
-        return;
-      }
-
-      await fetchTree();
 
       const res = await axios.get(backendUrl + "/api/nested/all", { withCredentials: true }
       );
@@ -354,15 +354,34 @@ export function StrukturFile() {
             `}
           />
 
-          {/* Item Name */}
-          <Typography
-            className={`flex-1 text-sm font-medium transition-colors ${isActive
-              ? "text-blue-700"
-              : "text-gray-900 group-hover:text-blue-600"
-              }`}
-          >
-            {node.name}
-          </Typography>
+          <div className="flex items-center gap-2 flex-1">
+            <Typography
+              className={`text-sm font-medium ${isActive
+                ? "text-blue-700"
+                : "text-gray-900"
+                }`}
+            >
+              {node.name}
+            </Typography>
+
+            {/* YEAR INDICATOR */}
+            {["Operasional", "Tematik", "Investigasi"].includes(node.name) &&
+              node.id === activeYearNode &&
+              selectedYear && (
+                <span
+                  className="
+          px-2 py-0.5
+          text-[11px] font-semibold
+          rounded-full
+          bg-blue-100 text-blue-700
+          whitespace-nowrap
+        "
+                >
+                  {selectedYear}
+                </span>
+              )}
+          </div>
+
 
           {/* File Size */}
           {node.size && (
@@ -374,13 +393,62 @@ export function StrukturFile() {
           )}
 
           {/* Children Count */}
-          {hasChildren && (
+          <div className="flex items-center gap-1">
+
+            {/* jumlah folder */}
             <Chip
               value={node.children.length}
               size="sm"
-              className="bg-gray-100 text-gray-600 font-normal"
+              className="bg-gray-100 text-gray-700 text-xs"
             />
-          )}
+
+            {/* tambah folder */}
+            {!userData?.isAccountVerified === false && (
+              <IconButton
+                size="sm"
+                variant="text"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setNewFolder({
+                    name: "",
+                    parentId: node.id,
+                    year: null,
+                    color: "blue",
+                  });
+                  setShowAddFolderModal(true);
+                }}
+              >
+                <PlusIcon className="w-4 h-4 text-green-600" />
+              </IconButton>
+            )}
+
+            {/* rename */}
+            <IconButton
+              size="sm"
+              variant="text"
+              onClick={(e) => {
+                e.stopPropagation();
+                setRenameFolder({ id: node.id, name: node.name });
+                setShowRenameModal(true);
+              }}
+            >
+              <PencilIcon className="w-4 h-4 text-blue-600 hover:text-blue-800" />
+            </IconButton>
+
+            {/* delete */}
+            <IconButton
+              size="sm"
+              variant="text"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteFolder(node);
+                setShowDeleteModal(true);
+              }}
+            >
+              <TrashIcon className="w-4 h-4 text-red-600" />
+            </IconButton>
+          </div>
+
         </div>
 
         {/* Children */}
@@ -488,25 +556,10 @@ export function StrukturFile() {
                 <ChevronRightIcon className="w-4 h-4" />
               </IconButton>
 
-              {/* Divider */}
-              <div className="w-px h-6 bg-gray-300 mx-1" />
-
-              {/* ➕ Tambah Folder */}
-              {!userData?.isAccountVerified === false &&
-                <IconButton
-                  variant="gradient"
-                  size="sm"
-                  onClick={() => setShowAddFolderModal(true)}
-                  className="group from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-md"
-                >
-                  <PlusIcon className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-90 group-hover:scale-110" />
-                </IconButton>
-              }
             </div>
           </div>
 
           {/* Tree View */}
-
           {viewMode === "tree" && (
             <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner] overflow-y-auto">
               {filterTreeBySearch(treeData, searchTerm).map((node) => (
@@ -662,6 +715,149 @@ export function StrukturFile() {
               </div>
             </div>
           )}
+
+          {showRenameModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/40" onClick={() => setShowRenameModal(false)} />
+
+              <div className="relative bg-white rounded-2xl w-96 p-6 shadow-xl">
+                <Typography className="font-semibold mb-4">✏️ Rename Folder</Typography>
+
+                <input
+                  value={renameFolder.name}
+                  onChange={(e) =>
+                    setRenameFolder({ ...renameFolder, name: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-xl mb-4"
+                />
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => setShowRenameModal(false)}
+                    className="px-4 py-2 text-sm"
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      await axios.put(
+                        backendUrl + "/api/nested/rename",
+                        renameFolder,
+                        { withCredentials: true }
+                      );
+                      setShowRenameModal(false);
+                      location.reload();
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showDeleteModal && deleteFolder && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div
+                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                onClick={() => setShowDeleteModal(false)}
+              />
+
+              <div className="
+      relative w-[420px]
+      bg-white rounded-3xl
+      shadow-2xl border border-gray-200
+      animate-[fadeIn_0.25s_ease-out]
+    ">
+                <div className="flex flex-col items-center text-center px-6 pt-6">
+                  <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                    <TrashIcon className="w-7 h-7 text-red-600" />
+                  </div>
+
+                  <Typography className="text-lg font-bold text-gray-800">
+                    Hapus Folder
+                  </Typography>
+
+                  <Typography className="text-sm text-gray-500 mt-1">
+                    Tindakan ini tidak bisa dibatalkan
+                  </Typography>
+                </div>
+
+                {/* Content */}
+                <div className="px-6 py-5">
+                  <div className="rounded-2xl bg-gray-50 border px-4 py-3 text-center">
+                    <Typography className="text-sm text-gray-600">
+                      Folder yang akan dihapus:
+                    </Typography>
+                    <Typography className="font-semibold text-gray-900 mt-1">
+                      {deleteFolder.name}
+                    </Typography>
+                  </div>
+
+                  <Typography className="text-xs text-red-500 text-center mt-4">
+                    Semua subfolder & file di dalamnya juga akan terhapus
+                  </Typography>
+                </div>
+
+                <div className="flex gap-3 px-6 pb-6">
+                  <button
+                    onClick={() => setShowDeleteModal(false)}
+                    className="
+            flex-1 px-4 py-2.5 rounded-xl
+            text-sm font-medium
+            text-gray-600 bg-gray-100
+            hover:bg-gray-200 transition
+          "
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      try {
+                        await axios.delete(
+                          backendUrl + `/api/nested/delete/${deleteFolder.id}`,
+                          { withCredentials: true }
+                        );
+
+                        const res = await axios.get(
+                          backendUrl + "/api/nested/all",
+                          { withCredentials: true }
+                        );
+
+                        const items =
+                          res.data.items ||
+                          res.data.data ||
+                          res.data ||
+                          [];
+
+                        setTreeData(buildTree(items));
+                        setShowDeleteModal(false);
+                        setDeleteFolder(null);
+                      } catch (err) {
+                        console.error(err);
+                        alert("Gagal menghapus folder");
+                      }
+                    }}
+                    className="
+            flex-1 px-4 py-2.5 rounded-xl
+            text-sm font-semibold
+            text-white
+            bg-gradient-to-br from-red-500 to-rose-600
+            hover:from-red-600 hover:to-rose-700
+            shadow-md transition
+          "
+                  >
+                    Ya, Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+
         </CardBody>
       </Card>
     </div>
