@@ -114,51 +114,112 @@ export const getFile = async (req, res) => {
     }
 };
 
-export const FolderTotal = async (req, res) => {
+// export const FolderTotal = async (req, res) => {
+//     try {
+//         const [folderCount] = await Promise.all([
+//             Nested.aggregate([
+//                 {
+//                     $match: {
+//                         parentId: {
+//                             $in: [
+//                                 new mongoose.Types.ObjectId("6989547fa7f77cef4554db55"),
+//                                 new mongoose.Types.ObjectId("698956c3a7f77cef4554db5d"),
+//                                 new mongoose.Types.ObjectId("698956faa7f77cef4554db5f"),
+//                                 new mongoose.Types.ObjectId("698958a7a7f77cef4554db6b")
+//                             ]
+//                         }
+//                     },
+//                 },
+
+//                 {
+//                     $group: {
+//                         _id: '$parentId',
+//                         folderCount: { $sum: 1 },
+//                     }
+//                 },
+
+//                 {
+//                     $lookup: {
+//                         from: "nesteds",
+//                         localField: "_id",
+//                         foreignField: "_id",
+//                         as: "parent"
+//                     }
+//                 },
+
+//                 {
+//                     $project: {
+//                         _id: 0,
+//                         parentId: "$_id",
+//                         Name: { $arrayElemAt: ["$parent.name", 0] },
+//                         folderCount: 1
+//                     }
+//                 }
+//             ]),
+//         ]);
+
+//         res.status(200).json({ success: true, folderCount: folderCount });
+//     } catch (error) {
+//         res.json({ success: false, message: error.message });
+//     }
+// }
+
+export const TotalFolderAndFile = async (req, res) => {
     try {
-        const [folderCount] = await Promise.all([
-            Nested.aggregate([
-                {
-                    $match: {
-                        parentId: {
-                            $in: [
-                                new mongoose.Types.ObjectId("6989547fa7f77cef4554db55"),
-                                new mongoose.Types.ObjectId("698956c3a7f77cef4554db5d"),
-                                new mongoose.Types.ObjectId("698956faa7f77cef4554db5f"),
-                                new mongoose.Types.ObjectId("698958a7a7f77cef4554db6b")
-                            ]
+        const parentIds = [
+            new mongoose.Types.ObjectId("6989547fa7f77cef4554db55"),
+            new mongoose.Types.ObjectId("698956c3a7f77cef4554db5d"),
+            new mongoose.Types.ObjectId("698956faa7f77cef4554db5f"),
+            new mongoose.Types.ObjectId("698958a7a7f77cef4554db6b")
+        ];
+
+        const result = await Nested.aggregate([
+            {
+                $match: {
+                    _id: { $in: parentIds },
+                    type: "folder"
+                }
+            },
+
+            {
+                $graphLookup: {
+                    from: "nesteds",
+                    startWith: "$_id",
+                    connectFromField: "_id",
+                    connectToField: "parentId",
+                    as: "descendants"
+                }
+            },
+
+            {
+                $project: {
+                    parentId: "$_id",
+                    parentName: "$name",
+
+                    totalFiles: {
+                        $size: {
+                            $filter: {
+                                input: "$descendants",
+                                as: "item",
+                                cond: { $eq: ["$$item.type", "file"] }
+                            }
                         }
                     },
-                },
 
-                {
-                    $group: {
-                        _id: '$parentId',
-                        folderCount: { $sum: 1 },
-                    }
-                },
-
-                {
-                    $lookup: {
-                        from: "nesteds",
-                        localField: "_id",
-                        foreignField: "_id",
-                        as: "parent"
-                    }
-                },
-
-                {
-                    $project: {
-                        _id: 0,
-                        parentId: "$_id",
-                        Name: { $arrayElemAt: ["$parent.name", 0] },
-                        folderCount: 1
+                    totalFolders: {
+                        $size: {
+                            $filter: {
+                                input: "$descendants",
+                                as: "item",
+                                cond: { $eq: ["$$item.type", "folder"] }
+                            }
+                        }
                     }
                 }
-            ]),
+            }
         ]);
 
-        res.status(200).json({ success: true, folderCount: folderCount });
+        res.status(200).json({ success: true, fileCount: result });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
