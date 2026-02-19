@@ -15,6 +15,7 @@ import {
 import { ReviewTable } from '../dashboard/ReviewTable'
 import { AppContent } from "@/context/AppContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 export function StrukturFile() {
@@ -77,8 +78,7 @@ export function StrukturFile() {
     return roots;
   };
 
-  useEffect(() => {
-    const fetchTree = async () => {
+  const fetchTree = async () => {
       try {
         const res = await axios.get(
           backendUrl + "/api/nested/all"
@@ -99,6 +99,7 @@ export function StrukturFile() {
       }
     };
 
+  useEffect(() => {
     if (isLoggedin) {
       fetchTree();
     }
@@ -191,7 +192,7 @@ export function StrukturFile() {
     }
 
     try {
-      await axios.post(
+      const {data} = await axios.post(
         backendUrl + "/api/nested/create",
         {
           name: newFolder.name,
@@ -203,6 +204,15 @@ export function StrukturFile() {
           withCredentials: true,
         }
       );
+
+      if (data.success) {
+        toast.success("Folder berhasil dibuat");
+      } else {
+        toast.error(data.message || "Gagal simpan folder");
+        return;
+      }
+
+      await fetchTree();
 
       const res = await axios.get(backendUrl + "/api/nested/all", { withCredentials: true }
       );

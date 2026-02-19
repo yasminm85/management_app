@@ -65,9 +65,7 @@ export function ReviewTable({ parentId, onBack }) {
         date: file.tanggal_file
           ? new Date(file.tanggal_file).toISOString().split("T")[0]
           : "",
-        size: file.size
-          ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
-          : "N/A",
+        size: file.size ?? null,
         uploadedAt: new Date(file.createdAt).toLocaleDateString("id-ID", {
           day: "2-digit",
           month: "short",
@@ -88,6 +86,14 @@ export function ReviewTable({ parentId, onBack }) {
     fetchFiles();
   }, [parentId]);
 
+  const formatSize = (bytes) => {
+  if (!bytes && bytes !== 0) return "";
+
+  const mb = bytes / (1024 * 1024);
+  return mb < 1
+    ? `${Math.round(bytes / 1024)} KB`
+    : `${mb.toFixed(2)} MB`;
+};
 
   const saveFile = async () => {
     if (!fileName || !newFile.file) {
@@ -315,7 +321,7 @@ export function ReviewTable({ parentId, onBack }) {
                   {/* SIZE */}
                   <td className="py-4 px-4 text-center">
                     <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-black-700">
-                      {file.size}
+                      {formatSize(file.size)}
                     </span>
                   </td>
                 </tr>
@@ -400,7 +406,7 @@ export function ReviewTable({ parentId, onBack }) {
                 value={fileName}
                 readOnly
                 className="bg-gray-100 cursor-not-allowed "
-                error={fileName && !isValid}
+                error={!!fileName && !isValid}
               />
               <Typography className="text-[11px] text-gray-500 mt-1">
                 Nama file dibuat otomatis dari tanggal terbit dokumen.
