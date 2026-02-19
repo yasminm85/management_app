@@ -11,5 +11,6 @@ nestedRouter.post('/create', uploadFile.single('file_nested'), userAuth, createN
 nestedRouter.get('/total', userAuth, TotalFolderAndFile);
 nestedRouter.get('/files/:id', userAuth, getItemById);
 nestedRouter.get('/get-file/:id', userAuth, getFile);
+// nestedRouter.put("/rename", userAuth, renameNestedItem);
 
 export default nestedRouter;

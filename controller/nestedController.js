@@ -76,6 +76,31 @@ export const getItemById = async (req, res) => {
     }
 }
 
+export const renameNestedItem = async (req, res) => {
+    try {
+        const { id, name } = req.body;
+
+        if (!id || !name) {
+            return res.status(400).json({ success: false, message: "ID dan nama wajib" });
+        }
+
+        const updated = await Nested.findByIdAndUpdate(
+            id,
+            { name },
+            { new: true }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ success: false, message: "Folder tidak ditemukan" });
+        }
+
+        res.json({ success: true, item: updated });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
 export const getFile = async (req, res) => {
     try {
         const { id } = req.params;
