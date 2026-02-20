@@ -91,25 +91,25 @@ export function StrukturFile() {
   };
 
   const fetchTree = async () => {
-      try {
-        const res = await axios.get(
-          backendUrl + "/api/nested/all"
-          , { withCredentials: true });
+    try {
+      const res = await axios.get(
+        backendUrl + "/api/nested/all"
+        , { withCredentials: true });
 
-        const items =
-          res.data.items ||
-          res.data.data ||
-          res.data ||
-          [];
+      const items =
+        res.data.items ||
+        res.data.data ||
+        res.data ||
+        [];
 
-        const tree = buildTree(items);
-        setTreeData(tree);
+      const tree = buildTree(items);
+      setTreeData(tree);
 
 
-      } catch (err) {
-        console.error("Gagal load tree:", err);
-      }
-    };
+    } catch (err) {
+      console.error("Gagal load tree:", err);
+    }
+  };
 
   useEffect(() => {
     if (isLoggedin) {
@@ -169,13 +169,13 @@ export function StrukturFile() {
     }
   };
 
- const handlePrev = () => {
-  setStartYear((prev) => prev - 1);
-};
+  const handlePrev = () => {
+    setStartYear((prev) => prev - 1);
+  };
 
-const handleNext = () => {
-  setStartYear((prev) => prev + 1);
-};
+  const handleNext = () => {
+    setStartYear((prev) => prev + 1);
+  };
 
 
   const openContextMenu = (e, node) => {
@@ -423,10 +423,15 @@ const handleNext = () => {
                 variant="text"
                 onClick={(e) => {
                   e.stopPropagation();
+                  const isYearContext =
+                    ["Operasional", "Tematik", "Investigasi"].includes(node.name) &&
+                    node.id === activeYearNode &&
+                    selectedYear;
+
                   setNewFolder({
                     name: "",
                     parentId: node.id,
-                    year: null,
+                    year: isYearContext ? selectedYear : null,
                     color: "blue",
                   });
                   setShowAddFolderModal(true);
@@ -505,6 +510,10 @@ const handleNext = () => {
 
     return result;
   };
+
+  const isYearLocked =
+    newFolder.year !== null &&
+    activeYearNode === newFolder.parentId;
 
   return (
     <div className="mt-8 mb-8 flex flex-col gap-6">
@@ -690,6 +699,7 @@ const handleNext = () => {
 
                     <select
                       value={newFolder.year || ""}
+                      disabled={isYearLocked}
                       onChange={(e) =>
                         setNewFolder({
                           ...newFolder,
@@ -762,20 +772,20 @@ const handleNext = () => {
                         { withCredentials: true }
                       );
                       toast.success("Folder berhasil direname");
-                        const res = await axios.get(
-                          backendUrl + "/api/nested/all",
-                          { withCredentials: true }
-                        );
+                      const res = await axios.get(
+                        backendUrl + "/api/nested/all",
+                        { withCredentials: true }
+                      );
 
-                        const items =
-                          res.data.items ||
-                          res.data.data ||
-                          res.data ||
-                          [];
+                      const items =
+                        res.data.items ||
+                        res.data.data ||
+                        res.data ||
+                        [];
 
                       setTreeData(buildTree(items));
                       setShowRenameModal(false);
-                      
+
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm"
                   >
