@@ -313,7 +313,6 @@ export const nestedName = async (req, res) => {
 
         const folder = result[0];
 
-        // urutkan dari root → parent
         const sortedAncestors = folder.ancestors
             .sort((a, b) => b.level - a.level)
             .map(a => ({
