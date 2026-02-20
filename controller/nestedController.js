@@ -158,7 +158,7 @@ export const updateNestedItem = async (req, res) => {
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
-};  
+};
 
 export const deleteNestedItem = async (req, res) => {
     try {
@@ -286,3 +286,50 @@ export const TotalFolderAndFile = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+
+export const nestedName = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await Nested.aggregate([
+            {
+                $match: { _id: new mongoose.Types.ObjectId(id) }
+            },
+            {
+                $graphLookup: {
+                    from: "nesteds",
+                    startWith: "$parentId",
+                    connectFromField: "parentId",
+                    connectToField: "_id",
+                    as: "ancestors",
+                    depthField: "level"
+                }
+            }
+        ]);
+
+        if (!result.length) {
+            return res.status(404).json({ message: "Folder not found" });
+        }
+
+        const folder = result[0];
+
+        // urutkan dari root → parent
+        const sortedAncestors = folder.ancestors
+            .sort((a, b) => b.level - a.level)
+            .map(a => ({
+                _id: a._id,
+                name: a.name
+            }));
+
+        res.json({
+            current: {
+                _id: folder._id,
+                name: folder.name
+            },
+            path: [...sortedAncestors, { _id: folder._id, name: folder.name }]
+        });
+
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+};
