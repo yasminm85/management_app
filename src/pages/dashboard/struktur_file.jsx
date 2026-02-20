@@ -517,7 +517,6 @@ const handleNext = () => {
         )}
 
         <CardBody className="bg-gradient-to-br from-blue-50 shadow-xl border border-gray-200 h-[80vh] flex flex-col">
-          {/* Header */}
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
             <div className="flex items-center gap-3">
               <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
@@ -537,7 +536,6 @@ const handleNext = () => {
               </div>
             </div>
 
-            {/* ACTION BUTTONS */}
             <div className="flex items-center gap-2">
               <input
                 type="text"
@@ -550,7 +548,6 @@ const handleNext = () => {
                   "
               />
 
-              {/* Expand */}
               <IconButton
                 variant="outlined"
                 size="sm"
@@ -560,7 +557,6 @@ const handleNext = () => {
                 <ChevronDownIcon className="w-4 h-4" />
               </IconButton>
 
-              {/* Collapse */}
               <IconButton
                 variant="outlined"
                 size="sm"
@@ -573,7 +569,6 @@ const handleNext = () => {
             </div>
           </div>
 
-          {/* Tree View */}
           {viewMode === "tree" && (
             <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner] overflow-y-auto">
               {filterTreeBySearch(treeData, searchTerm).map((node) => (
@@ -601,7 +596,6 @@ const handleNext = () => {
                 </Typography>
 
                 <div className="flex items-center justify-between gap-3">
-                  {/* KIRI */}
                   <button
                     onClick={handlePrev}
                     className="w-10 h-10 rounded-full border flex items-center justify-center
@@ -610,7 +604,6 @@ const handleNext = () => {
                     ◀
                   </button>
 
-                  {/* 4 TAHUN */}
                   <div className="grid grid-cols-4 gap-2 flex-1">
                     {[0, 1, 2, 3].map((i) => {
                       const year = startYear + i;
