@@ -14,7 +14,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "@/context/AppContext";
 
-export function ReviewTable({ parentId, onBack }) {
+export function ReviewTable({ parentId, onBack, path }) {
   const { backendUrl } = useContext(AppContent);
   const [search, setSearch] = useState("");
   const [date, setDate] = useState("");
@@ -29,6 +29,7 @@ export function ReviewTable({ parentId, onBack }) {
   const [fileName, setFileName] = useState("");
   const [fileDate, setFileDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [parentFolderName, setParentFolderName] = useState("");
   const isValid =
     fileDate &&
     fileName.startsWith(fileDate) &&
@@ -87,13 +88,13 @@ export function ReviewTable({ parentId, onBack }) {
   }, [parentId]);
 
   const formatSize = (bytes) => {
-  if (!bytes && bytes !== 0) return "";
+    if (!bytes && bytes !== 0) return "";
 
-  const mb = bytes / (1024 * 1024);
-  return mb < 1
-    ? `${Math.round(bytes / 1024)} KB`
-    : `${mb.toFixed(2)} MB`;
-};
+    const mb = bytes / (1024 * 1024);
+    return mb < 1
+      ? `${Math.round(bytes / 1024)} KB`
+      : `${mb.toFixed(2)} MB`;
+  };
 
   const saveFile = async () => {
     if (!fileName || !newFile.file) {
@@ -169,11 +170,22 @@ export function ReviewTable({ parentId, onBack }) {
 
   const handleDateChange = (value) => {
     setFileDate(value);
-
     if (!value) return;
 
-    const cleanedName = fileName.replace(/^\d{4}-\d{2}-\d{2}\s*/, "");
-    setFileName(`${value} ${cleanedName}`.trim());
+    let baseName = fileName;
+
+    baseName = baseName.replace(/^\d{4}-\d{2}-\d{2}\s*/, "");
+
+    if (parentFolderName) {
+      const regex = new RegExp(`^${parentFolderName}\\s+`, "i");
+      baseName = baseName.replace(regex, "");
+    }
+
+    const finalName = parentFolderName
+      ? `${value} ${parentFolderName} ${baseName}`
+      : `${value} ${baseName}`;
+
+    setFileName(finalName.trim());
   };
 
   const handleOpenFile = async (fileId) => {
@@ -186,6 +198,12 @@ export function ReviewTable({ parentId, onBack }) {
       console.error("Gagal buka file laporan", err);
     }
   };
+
+  useEffect(() => {
+    if (path?.length > 1) {
+      setParentFolderName(path[path.length - 2].name);
+    }
+  }, [path]);
 
   return (
     <>

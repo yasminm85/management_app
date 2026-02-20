@@ -40,6 +40,7 @@ export function StrukturFile() {
   const [viewMode, setViewMode] = useState("tree");
   const [activeReviewId, setActiveReviewId] = useState(null);
   const [showAddFolderModal, setShowAddFolderModal] = useState(false);
+  const [activePath, setActivePath] = useState([]);
   const [newFolder, setNewFolder] = useState({
     name: "",
     parentId: "",
@@ -334,6 +335,10 @@ export function StrukturFile() {
           onClick={() => {
             if (node.type === "folder" && !hasChildren) {
               setActiveReviewId(node.id);
+
+              const path = findPathById(treeData, node.id);
+              setActivePath(path || []);
+
               setViewMode("review");
             }
 
@@ -511,6 +516,22 @@ export function StrukturFile() {
     return result;
   };
 
+  const findPathById = (nodes, targetId, path = []) => {
+    for (const node of nodes) {
+      const newPath = [...path, { id: node.id, name: node.name }];
+
+      if (node.id === targetId) {
+        return newPath;
+      }
+
+      if (node.children?.length) {
+        const result = findPathById(node.children, targetId, newPath);
+        if (result) return result;
+      }
+    }
+    return null;
+  };
+
   const isYearLocked =
     newFolder.year !== null &&
     activeYearNode === newFolder.parentId;
@@ -592,6 +613,7 @@ export function StrukturFile() {
               <ReviewTable
                 reviewId={activeReviewId}
                 parentId={activeReviewId}
+                path={activePath}
                 onBack={() => setViewMode("tree")}
               />
             </div>
