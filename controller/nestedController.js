@@ -139,6 +139,43 @@ export const getFile = async (req, res) => {
     }
 };
 
+export const updateNestedItem = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+
+        const updatedItem = await Nested.findByIdAndUpdate(
+            id,
+            { name },
+            { returnDocument: 'after' }
+        );
+
+        if (!updatedItem) {
+            return res.status(404).json({ success: false, message: 'Item not found' });
+        }
+
+        res.status(200).json({ success: true, item: updatedItem });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+};  
+
+export const deleteNestedItem = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedItem = await Nested.findByIdAndDelete(id);
+
+        if (!deletedItem) {
+            return res.status(404).json({ success: false, message: 'Item not found' });
+        }
+
+        res.status(200).json({ success: true, message: 'Item deleted successfully' });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+};
+
 // export const FolderTotal = async (req, res) => {
 //     try {
 //         const [folderCount] = await Promise.all([
