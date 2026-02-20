@@ -17,6 +17,7 @@ import {
 import { ReviewTable } from '../dashboard/ReviewTable'
 import { AppContent } from "@/context/AppContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 export function StrukturFile() {
@@ -89,8 +90,7 @@ export function StrukturFile() {
     return roots;
   };
 
-  useEffect(() => {
-    const fetchTree = async () => {
+  const fetchTree = async () => {
       try {
         const res = await axios.get(
           backendUrl + "/api/nested/all"
@@ -111,6 +111,7 @@ export function StrukturFile() {
       }
     };
 
+  useEffect(() => {
     if (isLoggedin) {
       fetchTree();
     }
@@ -224,6 +225,8 @@ const handleNext = () => {
           withCredentials: true,
         }
       );
+
+      await fetchTree();
 
       const res = await axios.get(backendUrl + "/api/nested/all", { withCredentials: true }
       );
@@ -761,12 +764,25 @@ const handleNext = () => {
                   <button
                     onClick={async () => {
                       await axios.put(
-                        backendUrl + "/api/nested/rename",
+                        backendUrl + `/api/nested/update/${renameFolder.id}`,
                         renameFolder,
                         { withCredentials: true }
                       );
+                      toast.success("Folder berhasil direname");
+                        const res = await axios.get(
+                          backendUrl + "/api/nested/all",
+                          { withCredentials: true }
+                        );
+
+                        const items =
+                          res.data.items ||
+                          res.data.data ||
+                          res.data ||
+                          [];
+
+                      setTreeData(buildTree(items));
                       setShowRenameModal(false);
-                      location.reload();
+                      
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm"
                   >
@@ -841,6 +857,7 @@ const handleNext = () => {
                           { withCredentials: true }
                         );
 
+                        toast.success("Folder berhasil dihapus");
                         const res = await axios.get(
                           backendUrl + "/api/nested/all",
                           { withCredentials: true }
