@@ -130,24 +130,7 @@ export function ReviewTable({ parentId, onBack, path }) {
 
       if (data.success) {
         toast.success("File berhasil ditambahkan!");
-
-        await fetchFiles();
-
-        setFiles((prev) => [
-          ...prev,
-          {
-            id: data.fileId || crypto.randomUUID(),
-            name: fileName,
-            date: fileDate,
-            originalFile: true,
-            size: `${(Math.random() * 4 + 1).toFixed(2)} MB`,
-            uploadedAt: new Date(fileDate).toLocaleDateString("id-ID", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            }),
-          },
-        ]);
+        fetchFiles();
 
         setFileName("");
         setFileDate("");
