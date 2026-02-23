@@ -558,6 +558,7 @@ export function StrukturFile() {
     }
   };
 
+
   const openFileFromSearch = (file) => {
     setActiveReviewId(file.parentId);
     setActivePath(file.path);
@@ -636,22 +637,28 @@ export function StrukturFile() {
           </div>
 
 
-          {searchResults.length > 0 && (
+          {globalSearch.trim() !== "" && (
             <div className="mb-4 rounded-xl border bg-white shadow-sm max-h-64 overflow-y-auto">
-              {searchResults.map((file) => (
-                <div
-                  key={file.fileId}
-                  onClick={() => openFileFromSearch(file)}
-                  className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0"
-                >
-                  <div className="font-medium text-gray-800">
-                    {file.name}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {file.path.map(p => p.name).join(" / ")}
-                  </div>
+              {searchResults.length === 0 ? (
+                <div className="px-4 py-6 text-sm text-gray-500 text-center">
+                  Tidak ada file ditemukan
                 </div>
-              ))}
+              ) : (
+                searchResults.map((file) => (
+                  <div
+                    key={file.fileId}
+                    onClick={() => openFileFromSearch(file)}
+                    className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0"
+                  >
+                    <div className="font-medium text-gray-800">
+                      {file.name}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {file.path.map(p => p.name).join(" / ")}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           )}
 

@@ -24,7 +24,9 @@ export function ReviewTable({ parentId, onBack, path }) {
   });
 
   const [files, setFiles] = useState([]);
-
+  const [openViewer, setOpenViewer] = useState(false);
+  const [activeFileId, setActiveFileId] = useState(null);
+  const [path1, setPath] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState("");
   const [fileDate, setFileDate] = useState("");
@@ -81,8 +83,6 @@ export function ReviewTable({ parentId, onBack, path }) {
       setLoading(false);
     }
   };
-
-
 
 
   useEffect(() => {
@@ -191,19 +191,18 @@ export function ReviewTable({ parentId, onBack, path }) {
   };
 
   const handleOpenFile = async (fileId) => {
-    const res = await axios.get(
-      `${backendUrl}/api/nested/get-file/${fileId}`,
-      {
-        withCredentials: true,
-        responseType: "blob",
-      }
-    );
+    setActiveFileId(fileId);
+    setOpenViewer(true);
 
-    const blob = new Blob([res.data], { type: "application/pdf" });
-    const url = window.URL.createObjectURL(blob);
-
-    window.open(url, "_blank");
-
+    try {
+      const res = await axios.get(
+        `${backendUrl}/api/nested/name/${parentId}`,
+        { withCredentials: true }
+      );
+      setPath(res.data.path1 || []);
+    } catch (err) {
+      console.error("Gagal ambil path", err);
+    }
   };
 
   useEffect(() => {
@@ -355,6 +354,38 @@ export function ReviewTable({ parentId, onBack, path }) {
           </table>
         </div>
 
+        {openViewer && (
+          <div className="fixed inset-0 z-50 bg-black/40 flex flex-col">
+            {/* HEADER */}
+            <div className="bg-white px-4 py-2 flex justify-between items-center border-b">
+              <span className="text-sm font-semibold">Preview Dokumen</span>
+              <button
+                onClick={() => setOpenViewer(false)}
+                className="text-sm text-red-500 hover:underline"
+              >
+                Tutup
+              </button>
+            </div>
+
+            {/* VIEWER */}
+            <iframe
+              src={`${backendUrl}/api/nested/get-file/${activeFileId}`}
+              className="flex-1 w-full bg-gray-100"
+              title="Document Viewer"
+            />
+
+            {/* FOOTER */}
+            <div className="bg-gray-50 border-t px-4 py-2 text-xs text-gray-600">
+              Lokasi Dokumen:&nbsp;
+              {path1.map((p, i) => (
+                <span key={p._id}>
+                  {p.name}
+                  {i < path1.length - 1 && " > "}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </CardBody>
 
       {/* MODAL */}
