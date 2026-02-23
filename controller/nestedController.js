@@ -1,6 +1,9 @@
 import Nested from "../models/nestedModel.js";
+import userModel from "../models/userModel.js";
 import mongoose from "mongoose";
 const GridFSBucket = mongoose.mongo.GridFSBucket;
+import { PDFDocument, rgb } from "pdf-lib";
+import { nestedName } from "../helper/nestedName.js";
 
 export const createNestedItem = async (req, res) => {
 
@@ -106,33 +109,96 @@ export const getFile = async (req, res) => {
         const { id } = req.params;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).send('Invalid file id');
+            return res.status(400).send("Invalid file id");
         }
+
+        const fileId = new mongoose.Types.ObjectId(id);
 
         const bucket = new mongoose.mongo.GridFSBucket(
             mongoose.connection.db
         );
 
-        const fileId = new mongoose.Types.ObjectId(id);
-
         const files = await mongoose.connection.db
-            .collection('fs.files')
+            .collection("fs.files")
             .find({ _id: fileId })
             .toArray();
 
         if (!files || files.length === 0) {
-            return res.status(404).send('File not found');
+            return res.status(404).send("File not found");
         }
 
-        const file = files[0];
+        const gridFile = files[0];
 
-        res.writeHead(200, {
-            "Content-Type": file.contentType || "application/pdf",
-            "Content-Disposition": `inline; filename="${file.filename}"`,
-            "Accept-Ranges": "bytes",
+        const fileMeta = await Nested.findOne({ fileId });
+
+        if (!fileMeta) {
+            return res.status(404).send("File metadata not found");
+        }
+
+        const folderPath = await nestedName(fileMeta.parentId);
+
+        const chunks = [];
+        const downloadStream = bucket.openDownloadStream(fileId);
+
+        downloadStream.on("data", (chunk) => chunks.push(chunk));
+
+        downloadStream.on("error", (err) => {
+            console.error(err);
+            res.status(500).send("Error reading file");
         });
 
-        bucket.openDownloadStream(fileId).pipe(res);
+        downloadStream.on("end", async () => {
+            const pdfBytes = Buffer.concat(chunks);
+
+            const isPdf = gridFile.filename.toLowerCase().endsWith(".pdf");
+
+            if (!isPdf) {
+                res.set({
+                    "Content-Type": gridFile.contentType || "application/octet-stream",
+                    "Content-Disposition": `inline; filename="${gridFile.filename}"`,
+                });
+                return res.send(pdfBytes);
+            }
+
+            const pdfDoc = await PDFDocument.load(pdfBytes);
+            const pages = pdfDoc.getPages();
+
+            const folderPathText = folderPath.map(f => f.name).join(" / ");
+
+            const user = await userModel
+                .findById(req.user.id)
+                .select("name");
+
+            const downloadedBy = user?.name || "Unknown User";
+
+
+            const footerText =
+                `Lokasi Dokumen: ${folderPathText}\n` +
+                `Downloaded by : ${downloadedBy}`;
+
+
+            pages.forEach((page) => {
+                const { width } = page.getSize();
+
+                page.drawText(footerText, {
+                    x: 75,
+                    y: page.getHeight() - 800,
+                    size: 10,
+                    color: rgb(0, 0, 0),
+                });
+            });
+
+            const modifiedPdf = await pdfDoc.save();
+
+            res.set({
+                "Content-Type": "application/pdf",
+                "Content-Disposition": `inline; filename="${gridFile.filename}"`,
+                "Accept-Ranges": "bytes",
+            });
+
+            res.send(Buffer.from(modifiedPdf));
+        });
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Error retrieving file');
@@ -287,48 +353,5 @@ export const TotalFolderAndFile = async (req, res) => {
     }
 }
 
-export const nestedName = async (req, res) => {
-    const { id } = req.params;
 
-    try {
-        const result = await Nested.aggregate([
-            {
-                $match: { _id: new mongoose.Types.ObjectId(id) }
-            },
-            {
-                $graphLookup: {
-                    from: "nesteds",
-                    startWith: "$parentId",
-                    connectFromField: "parentId",
-                    connectToField: "_id",
-                    as: "ancestors",
-                    depthField: "level"
-                }
-            }
-        ]);
 
-        if (!result.length) {
-            return res.status(404).json({ message: "Folder not found" });
-        }
-
-        const folder = result[0];
-
-        const sortedAncestors = folder.ancestors
-            .sort((a, b) => b.level - a.level)
-            .map(a => ({
-                _id: a._id,
-                name: a.name
-            }));
-
-        res.json({
-            current: {
-                _id: folder._id,
-                name: folder.name
-            },
-            path: [...sortedAncestors, { _id: folder._id, name: folder.name }]
-        });
-
-    } catch (error) {
-        res.json({ success: false, message: error.message });
-    }
-};
