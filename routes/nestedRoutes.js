@@ -1,5 +1,5 @@
 import express from 'express';
-import { createNestedItem, getAllItems, getItemById, getFile, TotalFolderAndFile, updateNestedItem, deleteNestedItem } from '../controller/nestedController.js';
+import { createNestedItem, getAllItems, getItemById, getFile, TotalFolderAndFile, updateNestedItem, deleteNestedItem, getAllFiles } from '../controller/nestedController.js';
 import userAuth from '../middleware/userAuth.js';
 import uploadFile  from '../middleware/uploadFile.js';
 
@@ -9,6 +9,7 @@ nestedRouter.get('/all', userAuth, getAllItems);
 nestedRouter.post('/create', uploadFile.single('file_nested'), userAuth, createNestedItem);
 // nestedRouter.get('/folder-total', userAuth, FolderTotal);
 nestedRouter.get('/total', userAuth, TotalFolderAndFile);
+nestedRouter.get('/files', userAuth, getAllFiles);
 nestedRouter.get('/files/:id', userAuth, getItemById);
 nestedRouter.get('/get-file/:id', userAuth, getFile);
 // nestedRouter.get('/name/:id', userAuth, nestedName);

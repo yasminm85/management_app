@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const GridFSBucket = mongoose.mongo.GridFSBucket;
 import { PDFDocument, rgb } from "pdf-lib";
 import { nestedName } from "../helper/nestedName.js";
+import { buildPath } from "../helper/buildPath.js";
 
 export const createNestedItem = async (req, res) => {
 
@@ -242,55 +243,45 @@ export const deleteNestedItem = async (req, res) => {
     }
 };
 
-// export const FolderTotal = async (req, res) => {
-//     try {
-//         const [folderCount] = await Promise.all([
-//             Nested.aggregate([
-//                 {
-//                     $match: {
-//                         parentId: {
-//                             $in: [
-//                                 new mongoose.Types.ObjectId("6989547fa7f77cef4554db55"),
-//                                 new mongoose.Types.ObjectId("698956c3a7f77cef4554db5d"),
-//                                 new mongoose.Types.ObjectId("698956faa7f77cef4554db5f"),
-//                                 new mongoose.Types.ObjectId("698958a7a7f77cef4554db6b")
-//                             ]
-//                         }
-//                     },
-//                 },
+export const getAllFiles = async (req, res) => {
+    try {
+        const { q } = req.query;
 
-//                 {
-//                     $group: {
-//                         _id: '$parentId',
-//                         folderCount: { $sum: 1 },
-//                     }
-//                 },
+        const filter = {
+            type: "file",
+            ...(q && {
+                name: { $regex: q, $options: "i" }
+            })
+        };
 
-//                 {
-//                     $lookup: {
-//                         from: "nesteds",
-//                         localField: "_id",
-//                         foreignField: "_id",
-//                         as: "parent"
-//                     }
-//                 },
+        const files = await Nested.find(filter).lean();
 
-//                 {
-//                     $project: {
-//                         _id: 0,
-//                         parentId: "$_id",
-//                         Name: { $arrayElemAt: ["$parent.name", 0] },
-//                         folderCount: 1
-//                     }
-//                 }
-//             ]),
-//         ]);
+        const results = await Promise.all(
+            files.map(async (file) => {
+                const path = await buildPath(file.parentId);
 
-//         res.status(200).json({ success: true, folderCount: folderCount });
-//     } catch (error) {
-//         res.json({ success: false, message: error.message });
-//     }
-// }
+                return {
+                    fileId: file.fileId,
+                    name: file.name,
+                    parentId: file.parentId,
+                    path
+                };
+            })
+        );
+
+        res.status(200).json({
+            success: true,
+            results
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+
+}
 
 export const TotalFolderAndFile = async (req, res) => {
     try {
