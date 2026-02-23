@@ -41,6 +41,8 @@ export function StrukturFile() {
   const [activeReviewId, setActiveReviewId] = useState(null);
   const [showAddFolderModal, setShowAddFolderModal] = useState(false);
   const [activePath, setActivePath] = useState([]);
+  const [globalSearch, setGlobalSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [newFolder, setNewFolder] = useState({
     name: "",
     parentId: "",
@@ -128,15 +130,17 @@ export function StrukturFile() {
 
   const expandAll = () => {
     const allIds = {};
+
     const collectIds = (nodes) => {
       nodes.forEach(node => {
-        if (node.children && node.children.length > 0) {
+        if (node.children?.length) {
           allIds[node.id] = true;
           collectIds(node.children);
         }
       });
     };
-    collectIds(treeData);
+
+    collectIds(filteredTree);
     setExpanded(allIds);
   };
 
@@ -311,7 +315,9 @@ export function StrukturFile() {
 
   const TreeNode = ({ node, level = 0 }) => {
     const hasChildren = node.children && node.children.length > 0;
-    const isExpanded = expanded[node.id];
+    const isExpanded = searchTerm
+      ? true
+      : expanded[node.id];
     const Icon = node.icon;
     const isActive = activeReviewId === node.id;
 
@@ -422,7 +428,7 @@ export function StrukturFile() {
             />
 
             {/* tambah folder */}
-            {!userData?.isAccountVerified === false && (
+            {userData?.isAccountVerified !== false && (
               <IconButton
                 size="sm"
                 variant="text"
@@ -532,9 +538,40 @@ export function StrukturFile() {
     return null;
   };
 
+  const handleGlobalSearch = async (value) => {
+    setGlobalSearch(value);
+
+    if (!value) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const res = await axios.get(
+        `${backendUrl}/api/nested/files`,
+        { withCredentials: true }
+      );
+
+      setSearchResults(res.data.results || []);
+    } catch (err) {
+      console.error("Gagal search file:", err);
+    }
+  };
+
+  const openFileFromSearch = (file) => {
+    setActiveReviewId(file.parentId);
+    setActivePath(file.path);
+    setViewMode("review");
+
+    setSearchResults([]);
+    setGlobalSearch("");
+  };
+
   const isYearLocked =
     newFolder.year !== null &&
     activeYearNode === newFolder.parentId;
+
+  const filteredTree = filterTreeBySearch(treeData, searchTerm);
 
   return (
     <div className="mt-8 mb-8 flex flex-col gap-6">
@@ -569,13 +606,12 @@ export function StrukturFile() {
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Cari folder..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className=" px-3 py-2 text-sm rounded-xl border
-                  focus:outline-none focus:ring-2 focus:ring-blue-400
-                  transition w-48
-                  "
+                placeholder="Cari file (semua folder)..."
+                value={globalSearch}
+                onChange={(e) => handleGlobalSearch(e.target.value)}
+                className="px-3 py-2 text-sm rounded-xl border
+    focus:outline-none focus:ring-2 focus:ring-indigo-400
+    transition w-64"
               />
 
               <IconButton
@@ -599,9 +635,29 @@ export function StrukturFile() {
             </div>
           </div>
 
+
+          {searchResults.length > 0 && (
+            <div className="mb-4 rounded-xl border bg-white shadow-sm max-h-64 overflow-y-auto">
+              {searchResults.map((file) => (
+                <div
+                  key={file.fileId}
+                  onClick={() => openFileFromSearch(file)}
+                  className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0"
+                >
+                  <div className="font-medium text-gray-800">
+                    {file.name}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {file.path.map(p => p.name).join(" / ")}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {viewMode === "tree" && (
             <div className="space-y-1 bg-white/70 backdrop-blur rounded-2xl p-4 border border-gray-200 shadow-inner] overflow-y-auto">
-              {filterTreeBySearch(treeData, searchTerm).map((node) => (
+              {filteredTree.map((node) => (
                 <TreeNode key={node.id} node={node} />
               ))}
 
