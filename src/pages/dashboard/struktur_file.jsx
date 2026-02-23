@@ -548,7 +548,7 @@ export function StrukturFile() {
 
     try {
       const res = await axios.get(
-        `${backendUrl}/api/nested/files`,
+        `${backendUrl}/api/nested/files?q=${encodeURIComponent(value)}`,
         { withCredentials: true }
       );
 
