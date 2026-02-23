@@ -83,6 +83,8 @@ export function ReviewTable({ parentId, onBack, path }) {
   };
 
 
+
+
   useEffect(() => {
     fetchFiles();
   }, [parentId]);
@@ -189,14 +191,19 @@ export function ReviewTable({ parentId, onBack, path }) {
   };
 
   const handleOpenFile = async (fileId) => {
-    try {
-      window.open(
-        `${backendUrl}/api/nested/get-file/${fileId}`,
-        "_blank"
-      );
-    } catch (err) {
-      console.error("Gagal buka file laporan", err);
-    }
+    const res = await axios.get(
+      `${backendUrl}/api/nested/get-file/${fileId}`,
+      {
+        withCredentials: true,
+        responseType: "blob",
+      }
+    );
+
+    const blob = new Blob([res.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+
+    window.open(url, "_blank");
+
   };
 
   useEffect(() => {
