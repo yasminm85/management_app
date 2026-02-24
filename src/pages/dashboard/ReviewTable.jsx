@@ -137,10 +137,10 @@ export function ReviewTable({ parentId, onBack, path }) {
   };
 
   useEffect(() => {
-  if (parentId) {
-    fetchFiles();
-  }
-}, [parentId]);
+    if (parentId) {
+      fetchFiles();
+    }
+  }, [parentId]);
 
   const getFolderLevels = () => {
     if (!path || path.length < 2) {
@@ -263,6 +263,15 @@ export function ReviewTable({ parentId, onBack, path }) {
     }
   }, [path]);
 
+  const auditTitle = () => {
+    if (!path || path.length < 2) return "";
+
+    const level1 = path[path.length - 2]?.name;
+    const level2 = path[path.length - 1]?.name;
+
+    return `${level1} ${level2}`;
+  };
+
   return (
     <>
       <CardBody className="h-full flex flex-col">
@@ -286,6 +295,17 @@ export function ReviewTable({ parentId, onBack, path }) {
             </span>
           </button>
 
+          {/* KETERANGAN LOKASI AUDIT */}
+          {auditTitle() && (
+            <div className="mb-2 flex justify-center">
+              <div className="rounded-full shadow-sm">
+                <span className="text-base md:text-lg font-bold text-indigo-400 tracking-wide">
+                  {auditTitle()}
+                </span>
+              </div>
+            </div>
+          )}
+
           <Button
             size="sm"
             color="blue"
@@ -297,9 +317,12 @@ export function ReviewTable({ parentId, onBack, path }) {
           </Button>
         </div>
 
+
+
         <Typography variant="h4" className="font-semibold text-gray-800 mb-1">
           Daftar File
         </Typography>
+
         <Typography className="text-sm text-gray-500 mb-4">
           File pendukung hasil review
         </Typography>
