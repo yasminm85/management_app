@@ -14,10 +14,10 @@ export function Home() {
   const [data, setData] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [matrix, setMatrix] = useState([]);
-
+  const [openYear, setOpenYear] = useState(false);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
-    { length: 10 },
+    { length: 20 },
     (_, i) => currentYear - i
   );
   useEffect(() => {
@@ -155,37 +155,69 @@ export function Home() {
 
       </div>
 
-      {/* HEADER MATRKS + FILTER TAHUN */}
+    
       <div className="flex items-center justify-between mb-6">
         <Typography variant="h5" className="font-bold text-gray-800">
           Matriks Pemenuhan Dokumen Audit Operasional
         </Typography>
 
-        <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-100">
-          <span className="text-sm font-semibold text-blue-700">
-            Tahun
-          </span>
-
-          <select
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
+        <div className="relative">
+          <button
+            onClick={() => setOpenYear(!openYear)}
             className="
-        max-h-32 overflow-y-auto
-        text-sm font-semibold
-        bg-white text-blue-700
-        border border-blue-200
-        rounded-md px-2 py-1
-        focus:outline-none focus:ring-2 focus:ring-blue-400
+        flex items-center gap-3
+        bg-blue-50 border border-blue-200
+        px-4 py-2 rounded-xl
+        text-sm font-bold text-blue-700
+        shadow-sm hover:shadow-md
+        transition
       "
           >
-            {years.map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
+            <span>Tahun</span>
+            <span className="bg-white px-3 py-1 rounded-lg border">
+              {year}
+            </span>
+            <span className="text-xs">▾</span>
+          </button>
+
+          {openYear && (
+            <div
+              className="
+          absolute right-0 mt-2 z-20
+          w-32
+          max-h-40   /* ≈ 5 tahun */
+          overflow-y-auto
+          rounded-xl
+          border border-blue-200
+          bg-white
+          shadow-xl
+        "
+            >
+              {years.map((y) => (
+                <div
+                  key={y}
+                  onClick={() => {
+                    setYear(y);
+                    setOpenYear(false);
+                  }}
+                  className={`
+              px-4 py-2
+              text-sm font-semibold
+              cursor-pointer
+              transition
+              ${y === year
+                      ? "bg-blue-100 text-blue-800"
+                      : "text-gray-700 hover:bg-blue-50"}
+            `}
+                >
+                  {y}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* MATRIX CARD */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {dummyMatrix.map((item) => {
           const percent = Math.round((item.fulfilled / item.total) * 100);
