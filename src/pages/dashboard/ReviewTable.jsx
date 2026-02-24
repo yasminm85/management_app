@@ -22,7 +22,7 @@ export function ReviewTable({ parentId, onBack, path }) {
     name: "",
     file: null,
   });
-
+  const [fileCategory, setFileCategory] = useState("");
   const [files, setFiles] = useState([]);
   const [openViewer, setOpenViewer] = useState(false);
   const [activeFileId, setActiveFileId] = useState(null);
@@ -34,9 +34,61 @@ export function ReviewTable({ parentId, onBack, path }) {
   const [parentFolderName, setParentFolderName] = useState("");
   const isValid =
     fileDate &&
+    fileCategory &&
     fileName.startsWith(fileDate) &&
     /^\d{4}-\d{2}-\d{2}\s.+\..+$/.test(fileName);
 
+  const buildFileName = () => {
+    if (!fileDate || !newFile.file) return "";
+
+    const ext = newFile.file.name.split(".").pop();
+    const { level1, level2 } = getFolderLevels();
+
+    return [
+      fileDate,
+      level1,
+      getCategoryCode(fileCategory),
+      level2,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .concat(`.${ext}`);
+  };
+
+  const cleanLevel2Name = (name = "") => {
+    return name
+      .replace(/^cabang\s+/i, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
+  const FILE_CATEGORIES = [
+    "Proposal Audit",
+    "Surat Perintah Tugas",
+    "Laporan Hasil Audit Sementara",
+    "Laporan Hasil Audit Final",
+    "Arahan DU ke Auditee",
+    "Arahan DU ke Unit Terkait",
+    "Kertas Kerja Audit",
+    "Tindak Lanjut",
+    "Lainnya",
+  ];
+
+  const FILE_CATEGORY_MAP = {
+    "Proposal Audit": "PA",
+    "Surat Perintah Tugas": "SPT",
+    "Laporan Hasil Audit Sementara": "LHAS",
+    "Laporan Hasil Audit Final": "LHAF",
+    "Arahan DU ke Auditee": "ADU-Auditee",
+    "Arahan DU ke Unit Terkait": "ADU-UT",
+    "Kertas Kerja Audit": "KKA",
+    "Tindak Lanjut": "TinJut",
+    "Lainnya": "LAIN",
+  };
+
+  const getCategoryCode = (category) => {
+    return FILE_CATEGORY_MAP[category] || category;
+  };
 
   const fetchFiles = async () => {
     if (!parentId) return;
@@ -84,10 +136,43 @@ export function ReviewTable({ parentId, onBack, path }) {
     }
   };
 
+  useEffect(() => {
+  if (parentId) {
+    fetchFiles();
+  }
+}, [parentId]);
+
+  const getFolderLevels = () => {
+    if (!path || path.length < 2) {
+      return { level1: "", level2: "" };
+    }
+
+    return {
+      level1: path[path.length - 2]?.name || "",
+      level2: path[path.length - 1]?.name || "",
+    };
+  };
 
   useEffect(() => {
-    fetchFiles();
-  }, [parentId]);
+    if (!fileDate || !newFile.file || !fileCategory) return;
+
+    const ext = newFile.file.name.split(".").pop();
+    const { level1, level2 } = getFolderLevels();
+
+    const cleanLevel2 = cleanLevel2Name(level2);
+
+    const finalName = [
+      fileDate,
+      level1,
+      getCategoryCode(fileCategory),
+      cleanLevel2,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .concat(`.${ext}`);
+
+    setFileName(finalName);
+  }, [fileDate, fileCategory, newFile.file, path]);
 
   const formatSize = (bytes) => {
     if (!bytes && bytes !== 0) return "";
@@ -155,22 +240,6 @@ export function ReviewTable({ parentId, onBack, path }) {
 
   const handleDateChange = (value) => {
     setFileDate(value);
-    if (!value) return;
-
-    let baseName = fileName;
-
-    baseName = baseName.replace(/^\d{4}-\d{2}-\d{2}\s*/, "");
-
-    if (parentFolderName) {
-      const regex = new RegExp(`^${parentFolderName}\\s+`, "i");
-      baseName = baseName.replace(regex, "");
-    }
-
-    const finalName = parentFolderName
-      ? `${value} ${parentFolderName} ${baseName}`
-      : `${value} ${baseName}`;
-
-    setFileName(finalName.trim());
   };
 
   const handleOpenFile = async (fileId) => {
@@ -371,6 +440,8 @@ export function ReviewTable({ parentId, onBack, path }) {
         )}
       </CardBody>
 
+
+
       {/* MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -393,6 +464,28 @@ export function ReviewTable({ parentId, onBack, path }) {
               </Typography>
             </div>
             <div className="mb-4">
+              <div className="mb-4">
+                <Typography className="text-xs font-medium text-gray-700 mb-1">
+                  Kategori Dokumen
+                </Typography>
+
+                <select
+                  value={fileCategory}
+                  onChange={(e) => setFileCategory(e.target.value)}
+                  className="
+      w-full px-3 py-2 rounded-lg border
+      focus:outline-none focus:ring-2 focus:ring-blue-400
+      text-sm
+    "
+                >
+                  <option value="">-- Pilih Kategori --</option>
+                  {FILE_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <Typography className="text-xs font-medium text-gray-700 mb-1">
                 Upload File
               </Typography>
@@ -400,17 +493,37 @@ export function ReviewTable({ parentId, onBack, path }) {
               <input
                 type="file"
                 accept=".pdf,.doc,.docx,.xls,.xlsx"
+                // disabled={!fileDate || !fileCategory}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
 
                   setNewFile({ ...newFile, file });
-                  setFileName(file.name);
+
+                  const ext = file.name.split(".").pop();
+                  const { level1, level2 } = getFolderLevels();
+                  const cleanLevel2 = cleanLevel2Name(level2);
+
+                  const finalName = [
+                    fileDate,
+                    level1,
+                    getCategoryCode(fileCategory),
+                    cleanLevel2,
+                  ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .concat(`.${ext}`);
+
+                  setFileName(finalName);
                 }}
-                className="w-full text-sm file:mr-3 file:py-2 file:px-4
-               file:rounded-lg file:border-0
-               file:bg-blue-50 file:text-blue-700
-               hover:file:bg-blue-100"
+                className="
+    w-full text-sm
+    file:mr-3 file:py-2 file:px-4
+    file:rounded-lg file:border-0
+    file:bg-blue-50 file:text-blue-700
+    hover:file:bg-blue-100
+    disabled:opacity-50
+  "
               />
 
               <Typography className="text-[11px] text-gray-500 mt-1">

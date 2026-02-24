@@ -314,6 +314,7 @@ export function StrukturFile() {
   };
 
   const TreeNode = ({ node, level = 0 }) => {
+    const isLockedFolder = level === 0;
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = searchTerm
       ? true
@@ -428,7 +429,7 @@ export function StrukturFile() {
             />
 
             {/* tambah folder */}
-            {userData?.isAccountVerified !== false && (
+            {!isLockedFolder && userData?.isAccountVerified !== false && (
               <IconButton
                 size="sm"
                 variant="text"
@@ -453,19 +454,22 @@ export function StrukturFile() {
             )}
 
             {/* rename */}
-            <IconButton
-              size="sm"
-              variant="text"
-              onClick={(e) => {
-                e.stopPropagation();
-                setRenameFolder({ id: node.id, name: node.name });
-                setShowRenameModal(true);
-              }}
-            >
-              <PencilIcon className="w-4 h-4 text-blue-600 hover:text-blue-800" />
-            </IconButton>
+            {!isLockedFolder && (
+              <IconButton
+                size="sm"
+                variant="text"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRenameFolder({ id: node.id, name: node.name });
+                  setShowRenameModal(true);
+                }}
+              >
+                <PencilIcon className="w-4 h-4 text-blue-600 hover:text-blue-800" />
+              </IconButton>
+            )}
 
             {/* delete */}
+            {!isLockedFolder && (
             <IconButton
               size="sm"
               variant="text"
@@ -477,6 +481,7 @@ export function StrukturFile() {
             >
               <TrashIcon className="w-4 h-4 text-red-600" />
             </IconButton>
+            )}
           </div>
 
         </div>
@@ -768,7 +773,7 @@ export function StrukturFile() {
                     </Typography>
                     <input
                       type="text"
-                      placeholder="Contoh: Laporan Audit"
+                      placeholder="Masukkan Nama Folder"
                       value={newFolder.name}
                       onChange={(e) =>
                         setNewFolder({ ...newFolder, name: e.target.value })
