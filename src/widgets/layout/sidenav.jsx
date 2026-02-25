@@ -13,8 +13,15 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
   const sidenavTypes = {
-    dark: "bg-gradient-to-br from-gray-800 to-gray-900",
-    white: "bg-white shadow-sm",
+    dark: `
+    bg-gradient-to-br 
+    from-indigo-900 via-blue-900 to-purple-900
+    shadow-2xl
+  `,
+    white: `
+    bg-gradient-to-b from-white to-blue-50
+    shadow-xl
+  `,
     transparent: "bg-transparent",
   };
 
@@ -26,8 +33,15 @@ export function Sidenav({ brandImg, brandName, routes }) {
 
   return (
     <aside
-      className={`${sidenavTypes[sidenavType]} ${openSidenav ? "translate-x-0" : "-translate-x-80"
-        } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100`}
+      className={`
+    ${sidenavTypes[sidenavType]}
+    ${openSidenav ? "translate-x-0 opacity-100" : "-translate-x-80 opacity-0"}
+    fixed inset-0 z-50 my-4 ml-4
+    h-[calc(100vh-32px)] w-72 rounded-xl
+    transition-all duration-500 ease-in-out
+    xl:translate-x-0 xl:opacity-100
+    border border-blue-gray-100
+  `}
     >
       <div
         className={`relative`}
@@ -74,15 +88,29 @@ export function Sidenav({ brandImg, brandName, routes }) {
                       variant={isActive ? "gradient" : "text"}
                       color={
                         isActive
-                          ? buttonColorMap[sidenavColor] || "blue"
+                          ? "blue"
                           : sidenavType === "dark"
                             ? "white"
                             : "blue-gray"
                       }
-                      className="flex items-center gap-4 px-4 capitalize"
+                      className={`
+    group flex items-center gap-4 px-4 py-3 capitalize
+    transition-all duration-300 ease-out
+    ${isActive
+                          ? "shadow-lg shadow-blue-500/40 scale-[1.02]"
+                          : "hover:bg-blue-500/10 hover:translate-x-1"}
+  `}
                       fullWidth
                     >
-                      {icon}
+                      <span
+                        className="
+      transition-transform duration-300
+      group-hover:scale-110 group-hover:rotate-3
+    "
+                      >
+                        {icon}
+                      </span>
+
                       <Typography
                         color="inherit"
                         className="font-medium capitalize"
@@ -101,17 +129,23 @@ export function Sidenav({ brandImg, brandName, routes }) {
   );
 }
 
-Sidenav.defaultProps = {
-  brandName: (
-    <span className="flex flex-col leading-none">
-      <span className="text-3xl font-black tracking-widest 
-        bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600
-        bg-clip-text text-transparent">
-        SPI FILES
-      </span>
-    </span>
-  ),
-};
+<div className="py-6 px-8 text-center select-none">
+  <Typography
+    variant="h6"
+    className="
+      text-3xl font-black tracking-widest
+      bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600
+      bg-clip-text text-transparent
+      animate-pulse
+    "
+  >
+    SPI FILES
+  </Typography>
+
+  <span className="text-xs text-blue-200 tracking-wide">
+    Audit & Document System
+  </span>
+</div>
 
 
 

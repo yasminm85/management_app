@@ -20,12 +20,13 @@ export function Home() {
     { length: 20 },
     (_, i) => currentYear - i
   );
-  useEffect(() => {
-    axios.get(
-      `${backendUrl}/api/dashboard/audit-matrix?year=${year}`,
-      { withCredentials: true }
-    ).then(res => setMatrix(res.data));
-  }, [year]);
+
+  // useEffect(() => {
+  //   axios.get(
+  //     `${backendUrl}/api/dashboard/audit-matrix?year=${year}`,
+  //     { withCredentials: true }
+  //   ).then(res => setMatrix(res.data));
+  // }, [year]);
 
   useEffect(() => {
     const fetchData = async () => {

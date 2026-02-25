@@ -292,7 +292,6 @@ export function ReviewTable({ parentId, onBack, path }) {
             </span>
           </button>
 
-          {/* KETERANGAN LOKASI AUDIT */}
           {auditTitle() && (
             <div className="mb-2 flex justify-center">
               <div className="rounded-full shadow-sm">
