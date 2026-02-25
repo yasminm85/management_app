@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
   Typography,
+  CardBody
 } from "@material-tailwind/react";
 import {
   FolderIcon,
@@ -121,156 +122,170 @@ export function Home() {
 
 
   return (
-    <div className="mt-12 space-y-10">
-
-      <div>
-        <Typography variant="h2" className="font-bold text-gray-800">
-          Dashboard Audit SPI Files
-        </Typography>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCards.map(({ id, icon, title, value, totalFiles }) => (
-          <div
-            key={id}
-          >
-            <StatisticsCard
-              title={title}
-              value={value}
-              icon={React.createElement(icon, {
-                className: "w-6 h-6 text-white",
-              })}
-              iconLabel="Total Folder"
-              footer={
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-sm text-gray-600">
-                    Total File
-                  </span>
-                  <span className="rounded-full bg-blue-100 px-3 py-0.5 text-sm font-bold text-blue-700">
-                    {totalFiles}
-                  </span>
-                </div>
-
-              }
-            />
-          </div>
-        ))}
-
-      </div>
-
-    
-      <div className="flex items-center justify-between mb-6">
-        <Typography variant="h5" className="font-bold text-gray-800">
-          Matriks Pemenuhan Dokumen Audit Operasional
-        </Typography>
-
-        <div className="relative">
-          <button
-            onClick={() => setOpenYear(!openYear)}
-            className="
-        flex items-center gap-3
-        bg-blue-50 border border-blue-200
-        px-4 py-2 rounded-xl
-        text-sm font-bold text-blue-700
-        shadow-sm hover:shadow-md
-        transition
+    <CardBody
+      className="
+        relative
+        h-[80vh]
+        flex flex-col
+        rounded-3xl
+        bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50
+        border border-white/60
+        shadow-[0_20px_60px_rgba(59,130,246,0.25)]
+        overflow-hidden
       "
+    >
+      <div className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute bottom-10 -left-24 w-80 h-80 bg-purple-400/20 rounded-full blur-3xl" />
+
+      <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full mb-6" />
+
+      <div className="relative mt-8 space-y-10">
+        <div>
+          <Typography
+            variant="h2"
+            className="font-bold text-3xl md:text-4xl tracking-wide text-gray-800 relative"
           >
-            <span>Tahun</span>
-            <span className="bg-white px-3 py-1 rounded-lg border">
-              {year}
-            </span>
-            <span className="text-xs">▾</span>
-          </button>
-
-          {openYear && (
-            <div
-              className="
-          absolute right-0 mt-2 z-20
-          w-32
-          max-h-40   /* ≈ 5 tahun */
-          overflow-y-auto
-          rounded-xl
-          border border-blue-200
-          bg-white
-          shadow-xl
-        "
-            >
-              {years.map((y) => (
-                <div
-                  key={y}
-                  onClick={() => {
-                    setYear(y);
-                    setOpenYear(false);
-                  }}
-                  className={`
-              px-4 py-2
-              text-sm font-semibold
-              cursor-pointer
-              transition
-              ${y === year
-                      ? "bg-blue-100 text-blue-800"
-                      : "text-gray-700 hover:bg-blue-50"}
-            `}
-                >
-                  {y}
-                </div>
-              ))}
-            </div>
-          )}
+            Dashboard Audit SPI Files
+          </Typography>
         </div>
-      </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {dummyMatrix.map((item) => {
-          const percent = Math.round((item.fulfilled / item.total) * 100);
-          const status = getStatusConfig(item.fulfilled, item.total);
-
-          return (
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {statisticsCards.map(({ id, icon, title, value, totalFiles }) => (
             <div
-              key={item.cabang}
-              className="
-          bg-white rounded-2xl p-5
-          shadow-sm hover:shadow-lg
-          transition-all duration-300
-          hover:-translate-y-1
-        "
+              key={id}
             >
-              {/* HEADER */}
-              <div className="flex items-start justify-between mb-3">
-                <Typography className="font-bold text-gray-800">
-                  {item.cabang}
+              <StatisticsCard
+                title={title}
+                value={value}
+                icon={React.createElement(icon, {
+                  className: "w-6 h-6 text-white",
+                })}
+                iconLabel="Total Folder"
+                footer={
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-sm text-gray-600">
+                      Total File
+                    </span>
+                    <span className="rounded-full bg-blue-100 px-3 py-0.5 text-sm font-bold text-blue-700">
+                      {totalFiles}
+                    </span>
+                  </div>
+
+                }
+              />
+            </div>
+          ))}
+
+        </div>
+
+
+        <div className="flex items-center justify-between mb-6">
+          <Typography variant="h5" className="font-bold text-gray-800">
+            Matriks Pemenuhan Dokumen Audit Operasional
+          </Typography>
+
+          <div className="relative">
+            <button
+              onClick={() => setOpenYear(!openYear)}
+              className="flex items-center gap-3 bg-white/70 backdrop-blur 
+                border border-blue-200 px-4 py-2 rounded-xl text-sm font-bold 
+                text-blue-700 shadow hover:shadow-md transition"
+            >
+              <span>Tahun</span>
+              <span className="bg-white px-3 py-1 rounded-lg border">
+                {year}
+              </span>
+              <span className="text-xs">▾</span>
+            </button>
+
+            {openYear && (
+              <div
+                className="
+                  absolute right-0 mt-2 z-20
+                  w-32
+                  max-h-40   /* ≈ 5 tahun */
+                  overflow-y-auto
+                  rounded-xl
+                  border border-blue-200
+                  bg-white
+                  shadow-xl
+                "
+              >
+                {years.map((y) => (
+                  <div
+                    key={y}
+                    onClick={() => {
+                      setYear(y);
+                      setOpenYear(false);
+                    }}
+                    className={`
+                      px-4 py-2
+                      text-sm font-semibold
+                      cursor-pointer
+                      transition
+                      ${y === year
+                                ? "bg-blue-100 text-blue-800"
+                                : "text-gray-700 hover:bg-blue-50"}
+                    `}
+                  >
+                    {y}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {dummyMatrix.map((item) => {
+            const percent = Math.round((item.fulfilled / item.total) * 100);
+            const status = getStatusConfig(item.fulfilled, item.total);
+
+            return (
+              <div
+                key={item.cabang}
+                className="
+                  bg-white/80 backdrop-blur
+                  rounded-2xl p-5
+                  border border-gray-200
+                  shadow-md
+                  hover:shadow-xl
+                  transition-all duration-300
+                  hover:-translate-y-1
+                "
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <Typography className="font-bold text-gray-800">
+                    {item.cabang}
+                  </Typography>
+
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full font-semibold ${status.badgeBg} ${status.badgeText}`}
+                  >
+                    {status.label}
+                  </span>
+                </div>
+
+                <Typography className="text-sm text-gray-500 mb-2">
+                  {item.fulfilled} dari {item.total} dokumen terpenuhi
                 </Typography>
 
-                <span
-                  className={`text-xs px-2 py-1 rounded-full font-semibold ${status.badgeBg} ${status.badgeText}`}
-                >
-                  {status.label}
-                </span>
+                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div
+                    className={`${status.bar} h-2 rounded-full transition-all duration-700`}
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+
+                <Typography className="text-right text-xs text-gray-400 mt-2">
+                  {percent}%
+                </Typography>
               </div>
-
-              {/* INFO */}
-              <Typography className="text-sm text-gray-500 mb-2">
-                {item.fulfilled} dari {item.total} dokumen terpenuhi
-              </Typography>
-
-              {/* PROGRESS BAR */}
-              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                <div
-                  className={`${status.bar} h-2 rounded-full transition-all duration-700`}
-                  style={{ width: `${percent}%` }}
-                />
-              </div>
-
-              {/* PERCENT */}
-              <Typography className="text-right text-xs text-gray-400 mt-2">
-                {percent}%
-              </Typography>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </CardBody>
   );
 }
 
