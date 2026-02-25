@@ -13,15 +13,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
   const sidenavTypes = {
-    dark: `
-    bg-gradient-to-br 
-    from-indigo-900 via-blue-900 to-purple-900
-    shadow-2xl
-  `,
-    white: `
-    bg-gradient-to-b from-white to-blue-50
-    shadow-xl
-  `,
+    dark: "bg-gradient-to-br from-gray-800 to-gray-900",
+    white: "bg-white shadow-sm",
     transparent: "bg-transparent",
   };
 
@@ -129,23 +122,17 @@ export function Sidenav({ brandImg, brandName, routes }) {
   );
 }
 
-<div className="py-6 px-8 text-center select-none">
-  <Typography
-    variant="h6"
-    className="
-      text-3xl font-black tracking-widest
-      bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600
-      bg-clip-text text-transparent
-      animate-pulse
-    "
-  >
-    SPI FILES
-  </Typography>
-
-  <span className="text-xs text-blue-200 tracking-wide">
-    Audit & Document System
-  </span>
-</div>
+Sidenav.defaultProps = {
+  brandName: (
+    <span className="flex flex-col leading-none">
+      <span className="text-3xl font-black tracking-widest 
+        bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600
+        bg-clip-text text-transparent">
+        SPI FILES
+      </span>
+    </span>
+  ),
+};
 
 
 
