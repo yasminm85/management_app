@@ -243,19 +243,16 @@ export function ReviewTable({ parentId, onBack, path }) {
   };
 
   const handleOpenFile = async (fileId) => {
-    setActiveFileId(fileId);
-    setOpenViewer(true);
-
-    try {
-      const res = await axios.get(
-        `${backendUrl}/api/nested/name/${parentId}`,
-        { withCredentials: true }
-      );
-      setPath(res.data.path1 || []);
-    } catch (err) {
-      console.error("Gagal ambil path", err);
-    }
-  };
+  try {
+    window.open(
+      `${backendUrl}/api/nested/get-file/${fileId}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  } catch (err) {
+    console.error("Gagal ambil path", err);
+  }
+};
 
   useEffect(() => {
     if (path?.length > 1) {
@@ -428,39 +425,6 @@ export function ReviewTable({ parentId, onBack, path }) {
             </tbody>
           </table>
         </div>
-
-        {openViewer && (
-          <div className="fixed inset-0 z-50 bg-black/40 flex flex-col">
-            {/* HEADER */}
-            <div className="bg-white px-4 py-2 flex justify-between items-center border-b">
-              <span className="text-sm font-semibold">Preview Dokumen</span>
-              <button
-                onClick={() => setOpenViewer(false)}
-                className="text-sm text-red-500 hover:underline"
-              >
-                Tutup
-              </button>
-            </div>
-
-            {/* VIEWER */}
-            <iframe
-              src={`${backendUrl}/api/nested/get-file/${activeFileId}`}
-              className="flex-1 w-full bg-gray-100"
-              title="Document Viewer"
-            />
-
-            {/* FOOTER */}
-            <div className="bg-gray-50 border-t px-4 py-2 text-xs text-gray-600">
-              Lokasi Dokumen:&nbsp;
-              {path1.map((p, i) => (
-                <span key={p._id}>
-                  {p.name}
-                  {i < path1.length - 1 && " > "}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
       </CardBody>
 
 

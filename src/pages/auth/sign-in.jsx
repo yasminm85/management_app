@@ -66,9 +66,13 @@ export function SignIn() {
           <div className="login-form-wrapper">
             <div className="login-glass">
 
-              <Typography variant="h2" className="font-bold text-center mb-2">
-                Sign In
+              <Typography variant="h3" className="font-bold text-center mb-2">
+                Welcome to SPI FILES 
               </Typography>
+
+              {/* <Typography variant="h2" className="font-bold text-center mb-2">
+                Sign In
+              </Typography> */}
               <Typography className="text-center text-white-gray-600 mb-6">
                 Enter your email and password
               </Typography>

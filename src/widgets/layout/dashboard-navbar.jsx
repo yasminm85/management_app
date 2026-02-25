@@ -71,8 +71,8 @@ export function DashboardNavbar() {
         <Navbar
             color={fixedNavbar ? "white" : "transparent"}
             className={`rounded-xl transition-all ${fixedNavbar
-                    ? "sticky top-4 z-40 py-3 shadow-md shadow-blue-gray-500/5"
-                    : "px-0 py-1"
+                ? "sticky top-4 z-40 py-3 shadow-md shadow-blue-gray-500/5"
+                : "px-0 py-1"
                 }`}
             fullWidth
             blurred={fixedNavbar}
@@ -116,34 +116,37 @@ export function DashboardNavbar() {
 
                     {userData ? (
                         <Menu placement="bottom-end">
+                            <Typography variant="small" className="font-bold text-black">
+                                Selamat Datang, {userData.name}
+                            </Typography>
                             <MenuHandler>
                                 <div className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-gray-900 text-white cursor-pointer">
                                     {userData.name?.[0]?.toUpperCase()}
                                 </div>
                             </MenuHandler>
-                             
+
                             <MenuList className="w-48">
-                                {!userData.isAccountVerified && 
-                                <MenuItem
-                                    onClick={sendResetOtp
-                                    }
-                                    className="flex items-center gap-2"
-                                >
-                                    <UserCircleIcon className="h-4 w-4" />
-                                    Verifikasi Akun
-                                </MenuItem>
-                            }
-                            {userData.isAccountVerified &&
-                                <MenuItem
-                                    onClick={() =>
-                                        navigate("/auth/reset-password")
-                                    }
-                                    className="flex items-center gap-2"
-                                >
-                                    <KeyIcon className="h-4 w-4" />
-                                    Reset Password
-                                </MenuItem>
-        }
+                                {!userData.isAccountVerified &&
+                                    <MenuItem
+                                        onClick={sendResetOtp
+                                        }
+                                        className="flex items-center gap-2"
+                                    >
+                                        <UserCircleIcon className="h-4 w-4" />
+                                        Verifikasi Akun
+                                    </MenuItem>
+                                }
+                                {userData.isAccountVerified &&
+                                    <MenuItem
+                                        onClick={() =>
+                                            navigate("/auth/reset-password")
+                                        }
+                                        className="flex items-center gap-2"
+                                    >
+                                        <KeyIcon className="h-4 w-4" />
+                                        Reset Password
+                                    </MenuItem>
+                                }
 
                                 <hr className="my-1" />
 

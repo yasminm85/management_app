@@ -109,6 +109,7 @@ export function Home() {
     value: item.totalFolders,
     totalFiles: item.totalFiles,
     icon: FolderIcon,
+    iconLabel: "Total Folder",
     footer: {
       value: "Folder",
       label: "aktif",
@@ -138,6 +139,7 @@ export function Home() {
               icon={React.createElement(icon, {
                 className: "w-6 h-6 text-white",
               })}
+              iconLabel="Total Folder"
               footer={
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm text-gray-600">
