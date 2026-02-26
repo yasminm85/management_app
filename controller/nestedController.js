@@ -32,7 +32,7 @@ export const createNestedItem = async (req, res) => {
             });
         }
 
-        const items = await Nested.create({
+        const items = Nested.create({
             name: name,
             type: type,
             parentId: parentId || null,
@@ -40,16 +40,15 @@ export const createNestedItem = async (req, res) => {
             fileId: fileNestedId || null,
             tanggal_folder: tanggal_folder || null,
             tanggal_file: tanggal_file || null,
-            submitted_by: req.user.id,
             kategori_file: kategori_file || null,
             mimetype: req.file?.mimetype || null,
             filename: req.file?.originalname || null,
             size: req.file?.size || null
         });
 
-        const itemsId = await Nested.findById(items._id)
-            .populate("submitted_by", "name")
-        res.status(201).json({ success: true, message: 'Nested item created successfully', items: itemsId });
+
+
+        res.status(201).json({ success: true, message: 'Nested item created successfully', item: items });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
@@ -173,13 +172,11 @@ export const getFile = async (req, res) => {
                 .select("name");
 
             const downloadedBy = user?.name || "Unknown User";
-            const submittedBy = fileMeta.submitted_by ? await userModel.findById(fileMeta.submitted_by).select("name") : null;
-            const submittedByText = submittedBy ? `Submitted by: ${submittedBy.name}` : "Submitted by: Unknown";
+
 
             const footerText =
-                `Lokasi Dokumen: ${folderPathText}  ` +
-                `Downloaded by : ${downloadedBy}  ` +
-                `${submittedByText}`
+                `Lokasi Dokumen: ${folderPathText}\n` +
+                `Downloaded by : ${downloadedBy}`;
 
 
             pages.forEach((page) => {
@@ -315,16 +312,6 @@ export const TotalFolderAndFile = async (req, res) => {
             },
 
             {
-                $lookup: {
-                    from: "nesteds",
-                    localField: "_id",
-                    foreignField: "parentId",
-                    as: "children",
-                },
-            },
-
-
-            {
                 $project: {
                     parentId: "$_id",
                     parentName: "$name",
@@ -342,7 +329,7 @@ export const TotalFolderAndFile = async (req, res) => {
                     totalFolders: {
                         $size: {
                             $filter: {
-                                input: "$children",
+                                input: "$descendants",
                                 as: "item",
                                 cond: { $eq: ["$$item.type", "folder"] }
                             }
@@ -371,46 +358,74 @@ export const detectionFileCompleted = async (req, res) => {
             "Tindak Lanjut",
             "Lainnya",
         ];
+
         const { id } = req.params;
 
         const files = await Nested.find({
             parentId: id,
-            type: "file"
+            type: "file",
         }).lean();
 
         const existingKategori = new Set(
-            files
-                .map(f => f.kategori_file)
-                .filter(Boolean)
+            files.map(f => f.kategori_file).filter(Boolean)
         );
 
         const status = REQUIRED_KATEGORI.map(kategori => ({
             kategori,
-            fulfilled: existingKategori.has(kategori)
+            fulfilled: existingKategori.has(kategori),
         }));
 
-        res.status(200).json({ success: true, status });
+        const totalKategori = REQUIRED_KATEGORI.length;
+        const fulfilled = status.filter(s => s.fulfilled).length;
+        const percent = Math.round((fulfilled / totalKategori) * 100);
+
+        res.status(200).json({
+            success: true,
+            totalKategori,
+            fulfilled,
+            percent,
+            status,
+        });
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 };
 
-
 export const OperasionalFolder = async (req, res) => {
     try {
-        const folderId = new mongoose.Types.ObjectId("69895652a7f77cef4554db57");
+        const { year } = req.query;
 
-        const folders = await Nested.find({
+        const folderId = new mongoose.Types.ObjectId(
+            "69895652a7f77cef4554db57"
+        );
+
+        const allFolders = await Nested.find({
             parentId: folderId,
-            type: "folder"
+            type: "folder",
         }).lean();
 
+       
+        const match = {
+            parentId: folderId,
+            type: "folder",
+        };
 
-        res.status(200).json({ success: true, folders });
+        if (year) {
+            match.tanggal_folder = Number(year);
+        }
+
+        const folders = await Nested.find(match).lean();
+
+
+        res.json({ success: true, folders });
     } catch (error) {
+        console.error(error);
         res.json({ success: false, message: error.message });
     }
-}
+};
 
 
 
