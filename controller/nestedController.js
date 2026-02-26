@@ -41,6 +41,7 @@ export const createNestedItem = async (req, res) => {
             tanggal_folder: tanggal_folder || null,
             tanggal_file: tanggal_file || null,
             kategori_file: kategori_file || null,
+            submitted_by: req.user.id || null,
             mimetype: req.file?.mimetype || null,
             filename: req.file?.originalname || null,
             size: req.file?.size || null
@@ -172,11 +173,14 @@ export const getFile = async (req, res) => {
                 .select("name");
 
             const downloadedBy = user?.name || "Unknown User";
+            const submittedBy = fileMeta.submitted_by ? await userModel.findById(fileMeta.submitted_by).select("name") : null;
+            const submittedByName = submittedBy ? submittedBy.name : "Unknown User";
 
 
             const footerText =
-                `Lokasi Dokumen: ${folderPathText}\n` +
-                `Downloaded by : ${downloadedBy}`;
+                `Lokasi Dokumen: ${folderPathText}  ` +
+                `Downloaded by : ${downloadedBy}  ` +
+                `Submitted by: ${submittedByName}`;
 
 
             pages.forEach((page) => {
@@ -401,13 +405,7 @@ export const OperasionalFolder = async (req, res) => {
         const folderId = new mongoose.Types.ObjectId(
             "69895652a7f77cef4554db57"
         );
-
-        const allFolders = await Nested.find({
-            parentId: folderId,
-            type: "folder",
-        }).lean();
-
-       
+        
         const match = {
             parentId: folderId,
             type: "folder",
