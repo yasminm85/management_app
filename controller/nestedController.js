@@ -396,6 +396,23 @@ export const detectionFileCompleted = async (req, res) => {
 };
 
 
+export const OperasionalFolder = async (req, res) => {
+    try {
+        const folderId = new mongoose.Types.ObjectId("69895652a7f77cef4554db57");
+
+        const folders = await Nested.find({
+            parentId: folderId,
+            type: "folder"
+        }).lean();
+
+
+        res.status(200).json({ success: true, folders });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+
 
 
 
