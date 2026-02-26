@@ -12,8 +12,9 @@ import axios from "axios";
 
 export function Home() {
   const { backendUrl } = useContext(AppContent);
-  const [data, setData] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [summaryData, setSummaryData] = useState([]);
+  const [operasionalData, setOperasionalData] = useState([]);
   const [matrix, setMatrix] = useState([]);
   const [openYear, setOpenYear] = useState(false);
   const currentYear = new Date().getFullYear();
@@ -22,32 +23,89 @@ export function Home() {
     (_, i) => currentYear - i
   );
 
-  // useEffect(() => {
-  //   axios.get(
-  //     `${backendUrl}/api/dashboard/audit-matrix?year=${year}`,
-  //     { withCredentials: true }
-  //   ).then(res => setMatrix(res.data));
-  // }, [year]);
+  useEffect(() => {
+    if (!operasionalData.length) {
+      setMatrix([]);
+      return;
+    }
+
+    const fetchMatrix = async () => {
+      try {
+        const results = await Promise.all(
+          operasionalData.map(async (item) => {
+            const res = await axios.get(
+              `${backendUrl}/api/nested/detection-completed/${item.parentId}`,
+              { withCredentials: true }
+            );
+
+            return {
+              cabang: item.parentName,
+              fulfilled: res.data.fulfilled,
+              total: res.data.totalKategori,
+              percent: res.data.percent,
+            };
+          })
+        );
+
+        setMatrix(results);
+      } catch (err) {
+        console.error("Gagal ambil matrix", err);
+        setMatrix([]);
+      }
+    };
+
+    fetchMatrix();
+  }, [operasionalData, backendUrl]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSummary = async () => {
       try {
         const res = await axios.get(
           backendUrl + "/api/nested/total",
           { withCredentials: true }
         );
 
-        const sortedData = (res.data.fileCount || [])
+        const sorted = (res.data.fileCount || [])
           .sort((a, b) => a.parentName.localeCompare(b.parentName));
 
-        setData(sortedData);
+        setSummaryData(sorted);
       } catch (err) {
-        console.error("Gagal ambil activity", err);
+        console.error("Gagal ambil summary", err);
       }
     };
 
-    fetchData();
+    fetchSummary();
   }, [backendUrl]);
+
+  useEffect(() => {
+    const fetchOperasional = async () => {
+
+      setOperasionalData([]);
+      setMatrix([]);
+
+      try {
+        const res = await axios.get(
+          backendUrl + "/api/nested/operasional-folder",
+          {
+            params: { year },
+            withCredentials: true,
+          }
+        );
+
+        const mapped = (res.data.folders || []).map(f => ({
+          parentId: f._id,
+          parentName: f.name,
+        }));
+
+        setOperasionalData(mapped);
+      } catch (err) {
+        console.error("Gagal ambil folder operasional", err);
+      }
+    };
+
+    fetchOperasional();
+  }, [backendUrl, year]);
+
 
   const getStatusConfig = (fulfilled, total) => {
     const percent = Math.round((fulfilled / total) * 100);
@@ -78,34 +136,8 @@ export function Home() {
     };
   };
 
-  const dummyMatrix = [
-    {
-      cabang: "Cabang Jakarta",
-      fulfilled: 8,
-      total: 8,
-      status: "hijau",
-    },
-    {
-      cabang: "Cabang Bandung",
-      fulfilled: 6,
-      total: 8,
-      status: "kuning",
-    },
-    {
-      cabang: "Cabang Surabaya",
-      fulfilled: 3,
-      total: 8,
-      status: "merah",
-    },
-    {
-      cabang: "Cabang Medan",
-      fulfilled: 7,
-      total: 8,
-      status: "kuning",
-    },
-  ];
 
-  const statisticsCards = data.map((item, index) => ({
+  const statisticsCards = summaryData.map((item, index) => ({
     id: item.parentId,
     title: item.parentName,
     value: item.totalFolders,
@@ -222,8 +254,8 @@ export function Home() {
                       cursor-pointer
                       transition
                       ${y === year
-                                ? "bg-blue-100 text-blue-800"
-                                : "text-gray-700 hover:bg-blue-50"}
+                        ? "bg-blue-100 text-blue-800"
+                        : "text-gray-700 hover:bg-blue-50"}
                     `}
                   >
                     {y}
@@ -235,7 +267,23 @@ export function Home() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {dummyMatrix.map((item) => {
+          {matrix.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center py-12">
+              <div className="mb-4 rounded-full bg-blue-50 px-4 py-2 text-blue-600 text-sm font-semibold">
+                Tahun {year}
+              </div>
+
+              <Typography className="text-gray-700 font-semibold text-lg">
+                Tidak ada data Audit Operasional
+              </Typography>
+
+              <Typography className="text-gray-500 text-sm mt-1 italic text-center">
+                Belum terdapat folder atau dokumen Audit Operasional untuk tahun yang dipilih.
+              </Typography>
+            </div>
+          )}
+
+          {matrix.map((item) => {
             const percent = Math.round((item.fulfilled / item.total) * 100);
             const status = getStatusConfig(item.fulfilled, item.total);
 
