@@ -316,6 +316,15 @@ export const TotalFolderAndFile = async (req, res) => {
             },
 
             {
+                $lookup: {
+                    from: "nesteds",
+                    localField: "_id",
+                    foreignField: "parentId",
+                    as: "children",
+                },
+            },
+
+            {
                 $project: {
                     parentId: "$_id",
                     parentName: "$name",
@@ -333,7 +342,7 @@ export const TotalFolderAndFile = async (req, res) => {
                     totalFolders: {
                         $size: {
                             $filter: {
-                                input: "$descendants",
+                                input: "$children",
                                 as: "item",
                                 cond: { $eq: ["$$item.type", "folder"] }
                             }
@@ -405,7 +414,7 @@ export const OperasionalFolder = async (req, res) => {
         const folderId = new mongoose.Types.ObjectId(
             "69895652a7f77cef4554db57"
         );
-        
+
         const match = {
             parentId: folderId,
             type: "folder",
