@@ -314,16 +314,6 @@ export const TotalFolderAndFile = async (req, res) => {
                     as: "descendants"
                 }
             },
-
-            {
-                $lookup: {
-                    from: "nesteds",
-                    localField: "_id",
-                    foreignField: "parentId",
-                    as: "children",
-                },
-            },
-
             {
                 $project: {
                     parentId: "$_id",
@@ -342,9 +332,14 @@ export const TotalFolderAndFile = async (req, res) => {
                     totalFolders: {
                         $size: {
                             $filter: {
-                                input: "$children",
+                                input: "$descendants",
                                 as: "item",
-                                cond: { $eq: ["$$item.type", "folder"] }
+                                cond: {
+                                    $and: [
+                                        { $eq: ["$$item.type", "folder"] },
+                                        { $eq: ["$$item.isStatic", false] }
+                                    ]
+                                }
                             }
                         }
                     }
