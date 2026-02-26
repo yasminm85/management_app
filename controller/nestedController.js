@@ -87,7 +87,7 @@ export const renameNestedItem = async (req, res) => {
         const { id, name } = req.body;
 
         if (!id || !name) {
-            return res.status(400).json({ success: false, message: "ID dan nama wajib" });
+            return res.status(400).json({ success: false, message: "ID AND NAME are required" });
         }
 
         const updated = await Nested.findByIdAndUpdate(
@@ -97,7 +97,7 @@ export const renameNestedItem = async (req, res) => {
         );
 
         if (!updated) {
-            return res.status(404).json({ success: false, message: "Folder tidak ditemukan" });
+            return res.status(404).json({ success: false, message: "Folder or file not found" });
         }
 
         res.json({ success: true, item: updated });
