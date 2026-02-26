@@ -137,8 +137,6 @@ export function Home() {
       <div className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl" />
       <div className="pointer-events-none absolute bottom-10 -left-24 w-80 h-80 bg-purple-400/20 rounded-full blur-3xl" />
 
-      <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full mb-6" />
-
       <div className="relative mt-8 space-y-10">
         <div>
           <Typography
