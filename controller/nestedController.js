@@ -10,7 +10,7 @@ export const createNestedItem = async (req, res) => {
 
     try {
 
-        const { name, type, parentId, isStatic, tanggal_folder, tanggal_file } = req.body;
+        const { name, type, parentId, isStatic, tanggal_folder, tanggal_file, kategori_file } = req.body;
 
         let fileNestedId = null;
 
@@ -32,7 +32,7 @@ export const createNestedItem = async (req, res) => {
             });
         }
 
-        const items = Nested.create({
+        const items = await Nested.create({
             name: name,
             type: type,
             parentId: parentId || null,
@@ -40,14 +40,16 @@ export const createNestedItem = async (req, res) => {
             fileId: fileNestedId || null,
             tanggal_folder: tanggal_folder || null,
             tanggal_file: tanggal_file || null,
+            submitted_by: req.user.id,
+            kategori_file: kategori_file || null,
             mimetype: req.file?.mimetype || null,
             filename: req.file?.originalname || null,
             size: req.file?.size || null
         });
 
-
-
-        res.status(201).json({ success: true, message: 'Nested item created successfully', item: items });
+        const itemsId = await Nested.findById(items._id)
+            .populate("submitted_by", "name")
+        res.status(201).json({ success: true, message: 'Nested item created successfully', items: itemsId });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
@@ -171,11 +173,13 @@ export const getFile = async (req, res) => {
                 .select("name");
 
             const downloadedBy = user?.name || "Unknown User";
-
+            const submittedBy = fileMeta.submitted_by ? await userModel.findById(fileMeta.submitted_by).select("name") : null;
+            const submittedByText = submittedBy ? `Submitted by: ${submittedBy.name}` : "Submitted by: Unknown";
 
             const footerText =
-                `Lokasi Dokumen: ${folderPathText}\n` +
-                `Downloaded by : ${downloadedBy}`;
+                `Lokasi Dokumen: ${folderPathText}  ` +
+                `Downloaded by : ${downloadedBy}  ` +
+                `${submittedByText}`
 
 
             pages.forEach((page) => {
@@ -311,6 +315,16 @@ export const TotalFolderAndFile = async (req, res) => {
             },
 
             {
+                $lookup: {
+                    from: "nesteds",
+                    localField: "_id",
+                    foreignField: "parentId",
+                    as: "children",
+                },
+            },
+
+
+            {
                 $project: {
                     parentId: "$_id",
                     parentName: "$name",
@@ -328,7 +342,7 @@ export const TotalFolderAndFile = async (req, res) => {
                     totalFolders: {
                         $size: {
                             $filter: {
-                                input: "$descendants",
+                                input: "$children",
                                 as: "item",
                                 cond: { $eq: ["$$item.type", "folder"] }
                             }
@@ -343,6 +357,45 @@ export const TotalFolderAndFile = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+
+export const detectionFileCompleted = async (req, res) => {
+    try {
+        const REQUIRED_KATEGORI = [
+            "Proposal Audit",
+            "Surat Perintah Tugas",
+            "Laporan Hasil Audit Sementara",
+            "Laporan Hasil Audit Final",
+            "Arahan DU ke Auditee",
+            "Arahan DU ke Unit Terkait",
+            "Kertas Kerja Audit",
+            "Tindak Lanjut",
+            "Lainnya",
+        ];
+        const { id } = req.params;
+
+        const files = await Nested.find({
+            parentId: id,
+            type: "file"
+        }).lean();
+
+        const existingKategori = new Set(
+            files
+                .map(f => f.kategori_file)
+                .filter(Boolean)
+        );
+
+        const status = REQUIRED_KATEGORI.map(kategori => ({
+            kategori,
+            fulfilled: existingKategori.has(kategori)
+        }));
+
+        res.status(200).json({ success: true, status });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+};
+
+
 
 
 

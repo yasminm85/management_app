@@ -13,17 +13,17 @@ const nestedSchema = new mongoose.Schema({
     parentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Nested",
-        default: null, 
+        default: null,
     },
 
     isStatic: {
         type: Boolean,
-        default: false, 
+        default: false,
     },
 
     fileId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "fs.files", 
+        ref: "fs.files",
         default: null,
     },
     tanggal_folder: {
@@ -33,6 +33,15 @@ const nestedSchema = new mongoose.Schema({
     tanggal_file: {
         type: Date,
         default: null,
+    },
+    submitted_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'userSPI',
+        default: null
+    },
+    kategori_file: {
+        type: String,
+        default: null
     },
 
     mimetype: String,
