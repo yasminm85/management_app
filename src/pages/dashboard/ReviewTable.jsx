@@ -24,9 +24,6 @@ export function ReviewTable({ parentId, onBack, path }) {
   });
   const [fileCategory, setFileCategory] = useState("");
   const [files, setFiles] = useState([]);
-  const [openViewer, setOpenViewer] = useState(false);
-  const [activeFileId, setActiveFileId] = useState(null);
-  const [path1, setPath] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState("");
   const [fileDate, setFileDate] = useState("");
@@ -92,6 +89,7 @@ export function ReviewTable({ parentId, onBack, path }) {
 
   const fetchFiles = async () => {
     if (!parentId) return;
+    console.log(parentId);
 
     setLoading(true);
     try {
@@ -201,6 +199,7 @@ export function ReviewTable({ parentId, onBack, path }) {
       formData.append("parentId", parentId);
       formData.append("type", "file");
       formData.append("tanggal_file", fileDate);
+      formData.append("kategori_file", fileCategory);
 
       const { data } = await axios.post(
         backendUrl + "/api/nested/create",
