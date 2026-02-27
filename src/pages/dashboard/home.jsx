@@ -295,9 +295,7 @@ export function Home() {
                   rounded-2xl p-5
                   border border-gray-200
                   shadow-md
-                  hover:shadow-xl
                   transition-all duration-300
-                  hover:-translate-y-1
                 "
               >
                 <div className="flex items-start justify-between mb-3">
