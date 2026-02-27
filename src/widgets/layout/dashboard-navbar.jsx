@@ -126,17 +126,6 @@ export function DashboardNavbar() {
                             </MenuHandler>
 
                             <MenuList className="w-48">
-                                {!userData.isAccountVerified &&
-                                    <MenuItem
-                                        onClick={sendResetOtp
-                                        }
-                                        className="flex items-center gap-2"
-                                    >
-                                        <UserCircleIcon className="h-4 w-4" />
-                                        Verifikasi Akun
-                                    </MenuItem>
-                                }
-                                {userData.isAccountVerified &&
                                     <MenuItem
                                         onClick={() =>
                                             navigate("/auth/reset-password")
@@ -146,7 +135,6 @@ export function DashboardNavbar() {
                                         <KeyIcon className="h-4 w-4" />
                                         Reset Password
                                     </MenuItem>
-                                }
 
                                 <hr className="my-1" />
 

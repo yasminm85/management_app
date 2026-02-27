@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 
 export function StrukturFile() {
   const [treeData, setTreeData] = useState([]);
-  const { backendUrl, isLoggedin, userData } = useContext(AppContent);
+  const { backendUrl, isLoggedin } = useContext(AppContent);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -429,7 +429,7 @@ export function StrukturFile() {
             />
 
             {/* tambah folder */}
-            {!isLockedFolder && userData?.isAccountVerified !== false && (
+            {!isLockedFolder && (
               <IconButton
                 size="sm"
                 variant="text"
@@ -676,7 +676,7 @@ export function StrukturFile() {
             </div>
           )}
 
-          {viewMode === "review" && !userData?.isAccountVerified === false && (
+          {viewMode === "review" && (
             <div className=" bg-white rounded-2xl p-4 shadow-inner border h-[65vh] flex flex-col animate-[fadeIn_0.3s_ease-in-out]">
               <ReviewTable
                 reviewId={activeReviewId}

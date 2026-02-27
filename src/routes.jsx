@@ -5,7 +5,7 @@ import {
   DocumentTextIcon,
 } from "@heroicons/react/24/solid";
 import { Home, SamplePages, StrukturFile } from "@/pages/dashboard";
-import { SignIn, SignUp, VerifyToken, ResetPassword } from "@/pages/auth";
+import { SignIn, ResetPassword } from "@/pages/auth";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -46,20 +46,20 @@ export const routes = [
         element: <SignIn />,
         hidden: true,
       },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: "sign up",
-        path: "/sign-up",
-        element: <SignUp />,
-        hidden: true,
-      },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: "verify otp",
-        path: "/verify-otp",
-        element: <VerifyToken />,
-        hidden: true,
-      },
+      // {
+      //   icon: <RectangleStackIcon {...icon} />,
+      //   name: "sign up",
+      //   path: "/sign-up",
+      //   element: <SignUp />,
+      //   hidden: true,
+      // },
+      // {
+      //   icon: <RectangleStackIcon {...icon} />,
+      //   name: "verify otp",
+      //   path: "/verify-otp",
+      //   element: <VerifyToken />,
+      //   hidden: true,
+      // },
       {
         icon: <RectangleStackIcon {...icon} />,
         name: "reset password",
