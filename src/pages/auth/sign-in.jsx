@@ -46,23 +46,18 @@ export function SignIn() {
   return (
     <section className="login-page">
 
-      {/* === BACKGROUND IMAGE === */}
       <div className="login-bg" />
 
-      {/* === DARK OVERLAY === */}
       <div className="login-overlay" />
 
-      {/* === PESAWAT ANIMASI === */}
       <div className="airplane airplane-1">
         <img src="/img/airplane.png" alt="airplane" className="w-full h-full object-contain" />
       </div>
 
-      {/* === CONTENT === */}
       <div className="login-content">
 
         <div className="login-grid">
 
-          {/* === FORM === */}
           <div className="login-form-wrapper">
             <div className="login-glass">
 
@@ -70,9 +65,6 @@ export function SignIn() {
                 Welcome to SPI FILES 
               </Typography>
 
-              {/* <Typography variant="h2" className="font-bold text-center mb-2">
-                Sign In
-              </Typography> */}
               <Typography className="text-center text-white-gray-600 mb-6">
                 Enter your email and password
               </Typography>
@@ -100,7 +92,6 @@ export function SignIn() {
                     Password
                   </Typography>
 
-                  {/* Wrapper untuk input + icon */}
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
@@ -114,7 +105,6 @@ export function SignIn() {
                       }}
                     />
 
-                    {/* Icon di luar Input component */}
                     <span
                       onClick={togglePasswordVisibility}
                       className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -141,18 +131,10 @@ export function SignIn() {
                   Sign In
                 </Button>
 
-                <Typography className="text-center text-white-gray-600">
-                  Not registered?
-                  <Link to="/auth/sign-up" className="ml-1 font-medium text-gray-900">
-                    Create account
-                  </Link>
-                </Typography>
-
               </form>
             </div>
           </div>
 
-          {/* === SPACER KANAN (BIAR TOWER KELIATAN) === */}
           <div className="login-spacer" />
 
 
